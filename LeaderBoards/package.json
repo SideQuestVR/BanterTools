@@ -1,0 +1,14 @@
+{
+    "name": "server",
+    "version": "0.0.1",
+    "description": "-",
+    "main": "server.js",
+    "repository": "-",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "dependencies": {
+      "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.48.0"
+    }
+  }
+  
