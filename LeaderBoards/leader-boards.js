@@ -8,7 +8,7 @@ const app = uWS.SSLApp({
   maxPayloadLength: 512 * 1024,
   open: (ws) => {
     wssClients.push(ws);
-    console.log('A WebSocket connected!');
+    // console.log('A WebSocket connected!');
   },
   message: (ws, message, isBinary) => {
         try{
