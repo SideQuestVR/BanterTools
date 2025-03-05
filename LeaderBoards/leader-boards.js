@@ -94,7 +94,10 @@ class LeaderBoardsServer{
             }
             const score = room.boards[json.board].scores.find(score => score.id === json.id);
             if(score) {
-                score.score = json.score || 0;
+                // need to only update the score if its higher/lower.
+                if((score.score < json.score && json.sort === "asc") || (score.score > json.score && json.sort !== "asc")) {
+                    score.score = json.score || 0;
+                }
             }else{
                 room.boards[json.board].scores.push({id: json.id, name: json.name, score: json.score || 0});
             }
