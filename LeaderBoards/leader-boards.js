@@ -76,7 +76,7 @@ class LeaderBoardsServer{
   }
   parseMessage(msg, ws) { 
     try{
-        console.log(msg);
+        // console.log(msg);
         let json = JSON.parse(msg);
         if(!json.room) {
             this.errorResponse(ws, "error", "missing required fields");
@@ -107,7 +107,7 @@ class LeaderBoardsServer{
         }else{
             Object.keys(room.boards).forEach(b => {
                 const board = room.boards[b];
-                console.log({path: "update-scores", board: board.board, scores: board});
+                // console.log({path: "update-scores", board: board.board, scores: board});
                 ws.send(JSON.stringify({path: "update-scores", board: board.board, scores: board}));
             });
         }
