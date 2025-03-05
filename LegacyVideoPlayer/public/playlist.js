@@ -18,6 +18,7 @@ class PlaylistPlayer {
       this.core.sendMessage({path: "instance", data: this.core.params.instance, u: window.user});
     });
     const url = `https://${this.hostUrl}/?youtube=${encodeURIComponent(this.core.params.youtube)}&start=0&playlist=${this.core.params.playlist}&mute=${this.core.params.mute}&volume=${this.core.tempVolume}&instance=${this.core.params.instance}&user=${window.user.id}-_-${window.user.name}`;
+    console.log(url);
     this.core.setupBrowserElement(url);
   }
   setupCoreScript() {
