@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link href="./karaoke.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="playlistContainer">
+      <div class="searchContainer">
+        <input class="searchInput" placeholder="Search..."/>
+      </div>
+      <div class="playlistTitle">
+        <div class="title">
+          Karaoke Player
+        </div>
+        <div class="button teal " id="lockPlayer">Unlock</div><div class="button teal " id="takeOver">Take Over: Off</div><div class="button teal " id="autoSync">Auto Sync: Off</div>
+<!--         <div class="button teal red" id="stopVideo">Stop</div> -->
+<!--         <div class="button teal fullscreenButton">Fullscreen: Off</div> -->
+      </div>
+    </div>
+        
+    <div class="hostTitle"></div>    
+    <div class="playerContainer">
+      <div class="singerListTitle">Singers: Search for a song to add yourself to the list! </div>
+      <div class="videoPlaylistContainer">
+          
+      </div>
+    </div>
+    
+    <div class="searchBackDrop">
+      <span class="material-icons pointer closeSearch">close</span>
+    </div>
+    <div class="right searchButtons">
+       <div class="button teal slim">karaoke</div>
+       <div class="button teal slim">zoom karaoke</div>
+    </div>
+    <div class="videoSearchContainer">
+      
+    </div>
+    <div class="videoPreviewContainer">
+<!--       <span class="material-icons pointer closePreview">close</span> -->
+      <div class="videoPlayer">
+        <div id="playerContainer">
+          <div id="player">
+
+          </div>
+        </div>
+        <div id="videoPlayer">
+
+        </div>
+      </div>
+      <br>
+      <div class="center large-text">
+        Make sure the video seems to play without any errors, then click "Add Me To The List" when you are ready to join the list.
+      </div>
+        <br>
+      <div class="center">
+        <div class="button grey closePreview" >Back</div>
+        <div class="button teal " id="singIt">Add Me To The List</div>
+      </div>
+    </div>
+    <img src="https://cdn.glitch.global/e1a76c0e-a722-4204-9089-a5f3e4fe12f9/3-dots-move.svg?v=1678747444591" class="loadingSpinner"/>
+    <script src="./karaoke.js"></script>
+  </body> 
+</html>

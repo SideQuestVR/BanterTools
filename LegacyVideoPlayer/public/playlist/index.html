@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link href="./playlist.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="playlistContainer">
+      <div class="searchContainer">
+        <input class="searchInput" placeholder="Search..."/>
+      </div>
+      <div class="playlistTitle"><div class="title">
+          Video Playlist
+        </div><div class="button teal " id="lockPlayer">Unlock</div><div class="button teal " id="takeOver">TakeOver: Off</div><div class="button teal " id="voting">Voting: Off</div><div class="button teal" id="clearPlaylist">Clear List</div><div class="button teal" id="addPlaylist">Add Playlist Id</div><div class="button teal " id="autoSync">Enable Auto Sync</div>
+      </div>
+    </div>
+    <div class="hostTitle">
+
+    </div>
+    <div class="videoPlaylistContainer">
+      
+    </div>
+    <div class="searchBackDrop">
+      <span class="material-icons pointer closeSearch">close</span>
+    </div>
+    <div class="videoSearchContainer">
+      
+    </div>
+    <div class="addItemBackDrop">
+      <span class="material-icons pointer closeSearch">close</span>
+    </div>
+    <div class="addItemContainer">
+      <div class="addItemTitle">
+        Add youtube playlist by the playlist ID (will clear the existing playlist!)
+      </div>
+      <div class="addItemContent">
+        <input id="addItemInput" placeholder="Playlist ID..."/>
+      </div>
+      <div class="button slim teal" id="addItemSubmit">Load Playlist</div>
+    </div>
+    <img src="https://cdn.glitch.global/e1a76c0e-a722-4204-9089-a5f3e4fe12f9/3-dots-move.svg?v=1678747444591" class="loadingSpinner"/>
+    <script src="./playlist.js"></script>
+  </body> 
+</html>

@@ -1,0 +1,43 @@
+const Commands = {
+  INSTANCE: 'instance',
+  SEARCH: 'search',
+  SET_TIME: 'set-time',
+  SET_TRACK: 'set-track',
+  TOGGLE_LOCK: 'toggle-lock',
+  TOGGLE_CAN_TAKE_OVER: 'toggle-can-take-over',
+  ADD_TO_PLAYLIST: 'add-to-playlist',
+  MOVE_PLAYLIST_ITEM: 'move-playlist-item',
+  REMOVE_PLAYLIST_ITEM: 'remove-playlist-item',
+  TAKE_OVER: 'take-over',
+  FROM_PLAYLIST: 'from-playlist',
+  CLEAR_PLAYLIST: 'clear-playlist',
+  USER_VIDEO_PLAYER: 'user-video-player',
+  ADD_TO_PLAYERS: 'add-to-players',
+  REMOVE_FROM_PLAYERS: 'remove-from-players',
+  SET_VOLUME: 'set-volume',
+  MUTE: 'mute',
+  AUTO_SYNC: 'auto-sync',
+  SKIP_BACK: 'skip-back',
+  SKIP_FORWARD: 'skip-forward',
+  MEASURE_LATENCY: 'measure-latency',
+  OUT_OF_BOUNDS: 'out-of-bounds',
+  DOES_NOT_EXIST: 'does-not-exist',
+  PLAYBACK_UPDATE: 'playback-update',
+  SYNC_TIME: 'sync-time',
+  SEARCH_RESULTS: 'search-results',
+  ERROR:'error',
+  LINK_ME: 'link-me',
+  PLAYERS: 'players',
+  CLICK_BROWSER: 'click-browser',
+  SET_WS_TYPE: 'set-ws-type',
+  RESET_BROWSER: 'reset-browser',
+  SET_BROWSER_URL: 'set-browser-url',
+  TOGGLE_VOTE: 'toggle-vote',
+  DOWN_VOTE: 'down-vote',
+  UP_VOTE: 'up-vote',
+  STOP: 'stop'
+};
+if ((typeof process !== 'undefined') && 
+(process.release.name.search(/node|io.js/) !== -1)) {
+  module.exports = Commands;
+}

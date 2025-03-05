@@ -1,0 +1,23 @@
+{
+  "name": "mediasoup_v3_example",
+  "version": "0.8.0",
+  "description": "Broadcast example.",
+  "main": "mediasoup-broadcast-server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-client": "node_modules/browserify/bin/cmd.js node_modules/mediasoup-client/lib/index.js -s MediasoupClient -o public/js/mediasoup-client.js",
+    "broadcast": "node mediasoup_v3_broadcast.js"
+  },
+  "keywords": [
+    "webrtc"
+  ],
+  "author": "mganeko",
+  "license": "MIT",
+  "dependencies": {
+    "browserify": "^16.3.0",
+    "express": "^4.17.1",
+    "mediasoup": "^3.14.9",
+    "mediasoup-client": "^3.7.14",
+    "socket.io": "^2.2.0"
+  }
+}

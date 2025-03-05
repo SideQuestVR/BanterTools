@@ -1,0 +1,174 @@
+html{
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  font: 15px Roboto, sans-serif;
+}
+body{
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  width: 100%;
+  background: #7f7f7f;
+  background: linear-gradient(to bottom, #6a6e83, #332834);
+}
+.playlistContainer{
+  position: relative;
+  margin: auto;
+  background: #3f3f3f;
+  color: white;
+  height: 45px;
+  padding: 1px 15px;
+}
+#autoSync{
+   display: none; 
+}
+.searchContainer{
+  float: right;
+}
+.searchInput, #addItemInput{
+  background: rgba(0,0,0,0.2);
+  margin: 12px;
+  height: 32px;
+  border: 1px solid white;
+  font-size: 20px;
+  color: white;
+  width: 130px;
+  margin: 5px;
+}
+.title{
+  font-size: 1.4em;
+  display: inline-block;
+  margin-right: 15px;
+}
+.playlistTitle{
+  font-weight: normal;
+  margin-bottom: 5px;
+}
+.videoPlaylistContainer{
+  position: relative;
+  background: linear-gradient(to right, #1e181f, #2b313e);
+  color: white;
+  overflow: auto;
+  height: calc(100% - 87px);
+  width: 100%;
+}
+.searchBackDrop,.addItemBackDrop{
+  background: rgba(0,0,0,0.8);
+  position: absolute;
+  top: 50px;
+  left: 0;
+  height: calc(100% - 50px);
+  width: 100%;
+  display: none;
+}
+.videoSearchContainer, .addItemContainer{
+  position: absolute;
+  top: 0;
+  margin-top: 50px;
+  margin-left: 80px;
+  margin-right: 80px;
+  background: #8f8f8f;
+  color: white;
+  font: 15px Roboto, sans-serif;
+  overflow: auto;
+  height: calc(100% - 50px);
+  width: calc(100% - 160px); 
+  display: none;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.loadingSpinner{
+  height: 80px;
+  width: 80px;
+  position: absolute; 
+  top: 120px;
+  left: 50%;
+  margin-left: -40px;
+  display: none;
+}
+.pointer{
+  cursor: pointer;
+}
+.hostTitle{
+  font-style: italic;
+  font-size: 1em;
+  display: inline-block;
+  width: 100%;
+  height: 20px;
+  padding: 10px 15px;
+  background: #16181f;
+  color: white;
+}
+.addItemTitle{
+  font-style: italic;
+  font-size: 1.5em;
+  display: block;
+  margin-top: 1em;
+  margin-left: 1em;
+}
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 16px;  /* Preferred icon size */
+  display: inline-block;
+  vertical-align: baseline;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}  
+#takeOver{
+  display: none;
+}
+.closeSearch{
+  position:absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;    
+  color: white;
+  font-size: 2em;
+}
+.button{
+  padding: 10 10;
+  display: inline-block;
+  color: white;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-left: 5px;
+  user-select: none;
+  font-size: 1.4em;
+}
+.slim{
+  padding: 10 10;
+  font-size: 1em;
+  margin-top: -3px;
+}
+.teal{
+  background: url(https://cdn.glitch.global/cf03534b-1293-4351-8903-ba15ffa931d3/angryimg.png?v=1689619321813);
+  background-size: 100% 100%;
+}
+.red{
+  background: red;
+}
+.green{
+  background: green;
+}
+.extra-padding{
+  padding: 5 10;
+}

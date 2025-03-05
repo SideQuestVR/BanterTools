@@ -1,0 +1,222 @@
+html{
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  font: 15px Roboto, sans-serif;
+}
+body{
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  width: 100%;
+  background: #7f7f7f;
+  background: linear-gradient(to bottom, #6a6e83, #332834);
+}
+.playlistContainer{
+  position: relative;
+  margin: auto;
+  background: #3f3f3f;
+  color: white;
+  height: 45px;
+  padding: 1px 15px;
+}
+.singerListTitle{
+  padding-left: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: #2f2f2f;
+  font-weight: bold;
+  color: white;
+}
+.searchContainer{
+  float: right;
+}
+.right{
+  float: right;
+}
+.extra-margin-left{
+  margin-left: 30px;
+}
+.searchInput, #addItemInput{
+  background: rgba(0,0,0,0.2);
+  margin: 12px;
+  height: 32px;
+  border: 1px solid white;
+  font-size: 20px;
+  color: white;
+  width: 300px;
+  margin: 5px;
+}
+.playlistTitle{
+  font-weight: normal;
+  margin-bottom: 5px;
+}
+.playerContainer{
+  float: left; 
+  width: 100%;
+}
+.center{
+  text-align: center;
+}
+.searchButtons{
+  position: absolute;
+  top: 54px;
+  right: 20px;
+}
+.searchButtons > .button{
+  padding: 7 7;
+}
+.large-text{
+  font-size: 1.5em;
+  padding-left: 10%;
+  padding-right: 10%;
+}
+.videoPlayer{
+  width: 60%;
+  height: 60%;
+  left: 20%;
+  color: white;
+  background: #3f3f3f;
+  padding-bottom: 5px;
+  position: relative;
+}
+.videoPlaylistContainer{
+  position: relative;
+  background: linear-gradient(to right, #1e181f, #2b313e);
+  color: white;
+  overflow: auto;
+  height: calc(100% - 50px);
+  width: 100%;
+}
+.searchBackDrop,.addItemBackDrop{
+  background: rgba(0,0,0,0.8);
+  position: absolute;
+  top: 50px;
+  left: 0;
+  height: calc(100% - 50px);
+  width: 100%;
+  display: none;
+}
+.videoSearchContainer, .addItemContainer, .videoPreviewContainer{
+  position: absolute;
+  top: 0;
+  margin-top: 50px;
+  margin-left: 80px;
+  margin-right: 80px;
+  background: #8f8f8f;
+  color: white;
+  overflow: auto;
+  height: calc(100% - 50px);
+  width: calc(100% - 160px); 
+  display: none;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.videoSearchContainer{
+  margin-top: 87px;
+  height: calc(100% - 87px);
+}
+.videoPreviewContainer{
+  z-index: 2;
+  margin-left: 10px;
+  margin-right: 10px;
+  width: calc(100% - 20px); 
+}
+.loadingSpinner{
+  height: 80px;
+  width: 80px;
+  position: absolute; 
+  top: 120px;
+  left: 50%;
+  margin-left: -40px;
+  display: none;
+}
+.pointer{
+  cursor: pointer;
+}
+.hostTitle{
+  font-style: italic;
+  font-size: 1em;
+  display: inline-block;
+  width: 100%;
+  height: 20px;
+  padding: 10px 15px;
+  background: #16181f;
+  color: white;
+  overflow: hidden;
+  text-overflow: elipses;
+  white-space: nowrap;
+}
+.addItemTitle{
+  font-style: italic;
+  font-size: 1.5em;
+  display: block;
+  margin-top: 1em;
+  margin-left: 1em;
+}
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 16px;  /* Preferred icon size */
+  display: inline-block;
+  vertical-align: baseline;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga';
+}  
+#takeOver{
+  display: none;
+}
+.title{
+  font-size: 1.4em;
+  display: inline-block;
+  margin-right: 15px;
+}
+.closeSearch{
+  position:absolute;
+  top: 50px;
+  right: 20px;
+  cursor: pointer;    
+  color: white;
+  font-size: 2em;
+}
+.button{
+  padding: 10 10;
+  display: inline-block;
+  color: white;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-left: 5px;
+  user-select: none;
+  font-size: 1.4em;
+}
+.slim{
+  padding: 10 10;
+  font-size: 1em;
+  margin-top: -3px;
+}
+.teal{
+  background: url(https://cdn.glitch.global/cf03534b-1293-4351-8903-ba15ffa931d3/angryimg.png?v=1689619321813);
+  background-size: 100% 100%;
+}
+.grey{
+  background: grey;
+}
+.red{
+  background: red;
+}
+.green{
+  background: green;
+}
+.extra-padding{
+  padding: 5 10;
+}
