@@ -67,6 +67,7 @@ class LeaderBoardsServer{
         sockets: [],
         boards: {}
       };
+      console.log(this.rooms[name].id);
     }
     return this.rooms[name];
   }
