@@ -122,8 +122,8 @@ class LeaderBoardsServer{
   }
   broadcastDebounceTimeouts = {};
   broadcastToRoom(room, data) {
-    clearTimeout(broadcastDebounceTimeout[room.id]);
-    broadcastDebounceTimeout[room.id] = setTimeout(()=>{
+    clearTimeout(broadcastDebounceTimeouts[room.id]);
+    broadcastDebounceTimeouts[room.id] = setTimeout(()=>{
         wssClients.forEach((ws) => {
             if(ws.room === room.id) {
                 ws.send(JSON.stringify(data));
