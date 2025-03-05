@@ -70,24 +70,28 @@ class LeaderBoardsServer{
     return this.rooms[name];
   }
   parseMessage(msg, ws) { 
-    let json = JSON.parse(msg);
-    if(!json.room || !json.name || !json.id || !json.board || !json.sort) {
-        this.errorResponse(ws, "error", "missing required fields");
-        return;
+    try{
+        let json = JSON.parse(msg);
+        if(!json.room || !json.name || !json.id || !json.board || !json.sort) {
+            this.errorResponse(ws, "error", "missing required fields");
+            return;
+        }
+        let room = this.getOrCreateRoom(json.room);
+        ws.room = json.room;
+        room.sockets.push(ws);
+        if(!room.boards[json.board]) {
+            room.boards[json.board] = {
+                scores: [],
+                type: json.sort
+            };
+        }
+        room.boards[json.board].push({id: json.id, name: json.name, score: json.score || 0});
+        room.boards[json.board].sort(room.boards[json.board].sort === "asc" ? (a, b) => a.score - b.score : (a, b) => b.score - a.score);
+        this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
+
+    }catch(e) {
+        this.errorResponse(ws, "error", e.message);
     }
-    let room = this.getOrCreateRoom(json.room);
-    ws.room = json.room;
-    room.sockets.push(ws);
-    if(!room.boards[json.board]) {
-        room.boards[json.board] = {
-            scores: [],
-            type: json.sort
-        };
-    }
-    room.boards[json.board].push({id: json.id, name: json.name, score: json.score || 0});
-    room.boards[json.board].sort(room.boards[json.board].sort === "asc" ? (a, b) => a.score - b.score : (a, b) => b.score - a.score);
-    this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
-    
   }
   cleanRoom(room) {
     // Clean up disconected websockets from the room.
