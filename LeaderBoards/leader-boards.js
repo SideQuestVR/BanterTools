@@ -127,8 +127,8 @@ class LeaderBoardsServer{
       }
     });
     if(shouldDeleteRoom) {
-      console.log("room empty, killing: " + room.id);
-      delete this.rooms[room.id];
+      console.log("room empty, should be killing: " + room.id);
+    //   delete this.rooms[room.id];
     }else{
       room.sockets = room.sockets.filter(ws => !removeSockets.includes(ws));
     }
