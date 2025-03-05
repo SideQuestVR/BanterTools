@@ -83,7 +83,7 @@ class LeaderBoardsServer{
         if(!room.boards[json.board]) {
             room.boards[json.board] = {
                 scores: [],
-                type: json.sort
+                sort: json.sort
             };
         }
         const score = room.boards[json.board].scores.find(score => score.id === json.id);
