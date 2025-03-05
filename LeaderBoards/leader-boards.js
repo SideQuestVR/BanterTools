@@ -67,7 +67,6 @@ class LeaderBoardsServer{
         sockets: [],
         boards: {}
       };
-      console.log(this.rooms[name].id);
     }
     return this.rooms[name];
   }
@@ -94,6 +93,8 @@ class LeaderBoardsServer{
             room.boards[json.board].scores.push({id: json.id, name: json.name, score: json.score || 0});
         }
         room.boards[json.board].scores.sort(room.boards[json.board].sort === "asc" ? (a, b) => a.score - b.score : (a, b) => b.score - a.score);
+        
+        console.log(room);
         this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
 
     }catch(e) {
