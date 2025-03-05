@@ -1,6 +1,6 @@
 class Player {
   constructor(){
-    this.hostUrl = 'vidya.sdq.st';
+    this.hostUrl = 'screen.sdq.st';
     this.currentScript = Array.from(document.getElementsByTagName('script')).slice(-1)[0];
     this.init();
   }
