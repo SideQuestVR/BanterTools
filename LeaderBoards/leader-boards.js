@@ -60,13 +60,17 @@ class LeaderBoardsServer{
     console.log("error: ", data);
     ws.send(JSON.stringify({path, data}));
   }
-  getOrCreateRoom(name) {
+  getOrCreateRoom(name, ws) {
     if(!this.rooms[name]) {
       this.rooms[name] = {
         id: name,
-        sockets: [],
+        sockets: [ws],
         boards: {}
       };
+    }else{
+        if(!this.rooms[name].sockets.includes(ws)) {
+            this.rooms[name].sockets.push(ws);
+        }
     }
     return this.rooms[name];
   }
@@ -78,9 +82,8 @@ class LeaderBoardsServer{
             this.errorResponse(ws, "error", "missing required fields");
             return;
         }
-        let room = this.getOrCreateRoom(json.room);
+        let room = this.getOrCreateRoom(json.room, ws);
         ws.room = json.room;
-        room.sockets.push(ws);
         if(json.name && json.id && json.board && json.sort) {
             if(!room.boards[json.board]) {
                 room.boards[json.board] = {
