@@ -122,14 +122,14 @@ class LeaderBoardsServer{
   }
   broadcastDebounceTimeouts = {};
   broadcastToRoom(room, data) {
-    clearTimeout(broadcastDebounceTimeouts[room.id]);
-    broadcastDebounceTimeouts[room.id] = setTimeout(()=>{
+    clearTimeout(this.broadcastDebounceTimeouts[room.id]);
+    this.broadcastDebounceTimeouts[room.id] = setTimeout(()=>{
         wssClients.forEach((ws) => {
             if(ws.room === room.id) {
                 ws.send(JSON.stringify(data));
             }
         });
-        delete broadcastDebounceTimeout[room.id];
+        delete this.broadcastDebounceTimeout[room.id];
         this.cleanRoom(room);
     }, 100);
   }
