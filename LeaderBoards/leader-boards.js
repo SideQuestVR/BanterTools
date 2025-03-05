@@ -8,6 +8,7 @@ const app = uWS.SSLApp({
   maxPayloadLength: 512 * 1024,
   open: (ws) => {
     wssClients.push(ws);
+    ws.send(JSON.stringify(data));
     // console.log('A WebSocket connected!');
   },
   message: (ws, message, isBinary) => {
@@ -80,22 +81,28 @@ class LeaderBoardsServer{
         let room = this.getOrCreateRoom(json.room);
         ws.room = json.room;
         room.sockets.push(ws);
-        if(!room.boards[json.board]) {
-            room.boards[json.board] = {
-                scores: [],
-                sort: json.sort
-            };
-        }
-        const score = room.boards[json.board].scores.find(score => score.id === json.id);
-        if(score) {
-            score.score = json.score || 0;
+        if(json.id && json.board && json.sort) {
+            if(!room.boards[json.board]) {
+                room.boards[json.board] = {
+                    scores: [],
+                    sort: json.sort,
+                    board: json.board
+                };
+            }
+            const score = room.boards[json.board].scores.find(score => score.id === json.id);
+            if(score) {
+                score.score = json.score || 0;
+            }else{
+                room.boards[json.board].scores.push({id: json.id, name: json.name, score: json.score || 0});
+            }
+            room.boards[json.board].scores.sort(room.boards[json.board].sort === "asc" ? (a, b) => a.score - b.score : (a, b) => b.score - a.score);
+            
+            this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
         }else{
-            room.boards[json.board].scores.push({id: json.id, name: json.name, score: json.score || 0});
+            Object.keys(room.boards).forEach(board => {
+                ws.send(JSON.stringify({path: "update-scores", board: board.board, scores: board}));
+            });
         }
-        room.boards[json.board].scores.sort(room.boards[json.board].sort === "asc" ? (a, b) => a.score - b.score : (a, b) => b.score - a.score);
-        
-        this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
-
     }catch(e) {
         this.errorResponse(ws, "error", e.message);
     }
