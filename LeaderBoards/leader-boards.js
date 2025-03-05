@@ -72,6 +72,7 @@ class LeaderBoardsServer{
   }
   parseMessage(msg, ws) { 
     try{
+        console.log(msg);
         let json = JSON.parse(msg);
         if(!json.room || !json.name || !json.id || !json.board || !json.sort) {
             this.errorResponse(ws, "error", "missing required fields");
