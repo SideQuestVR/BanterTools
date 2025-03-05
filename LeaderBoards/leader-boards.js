@@ -74,14 +74,14 @@ class LeaderBoardsServer{
     try{
         console.log(msg);
         let json = JSON.parse(msg);
-        if(!json.room || !json.name || !json.id || !json.board || !json.sort) {
+        if(!json.room) {
             this.errorResponse(ws, "error", "missing required fields");
             return;
         }
         let room = this.getOrCreateRoom(json.room);
         ws.room = json.room;
         room.sockets.push(ws);
-        if(json.id && json.board && json.sort) {
+        if(json.name && json.id && json.board && json.sort) {
             if(!room.boards[json.board]) {
                 room.boards[json.board] = {
                     scores: [],
