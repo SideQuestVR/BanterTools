@@ -27,11 +27,11 @@ var privateKey = null;
 var certificate = null;
 if (!useletsencrypt) {
 	console.log("dointhewhatever thefucking thing is");    
-privateKey = fs.readFileSync( '/root/vidya/ssl/sdq.st.key' );
-    certificate = fs.readFileSync( '/root/vidya/ssl/sdq.st.cert' );
+privateKey = fs.readFileSync( '../ssl/sdq.st.key' );
+    certificate = fs.readFileSync( '../ssl/sdq.st.cert' );
 } else {
-    privateKey = fs.readFileSync( '/root/vidya/ssl/vidya.sdq.st/privkey.pem' );
-    certificate = fs.readFileSync( '/root/vidya/ssl/vidya.sdq.st/cert.pem' );
+    // privateKey = fs.readFileSync( '../ssl/vidya.sdq.st/privkey.pem' );
+    // certificate = fs.readFileSync( '/root/vidya/ssl/vidya.sdq.st/cert.pem' );
 
 }
 
