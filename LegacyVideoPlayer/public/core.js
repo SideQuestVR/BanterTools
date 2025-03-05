@@ -39,6 +39,10 @@ class Core{
         }
       }
       await window.AframeInjection.waitFor(window, 'user');
+      
+      if(this.params["hand-controls"] === 'true') { 
+        this.setupHandControls();
+      }
     }else{
       try{
         if(!window.user) {
@@ -225,27 +229,92 @@ class Core{
   openPlaylist() {
     window.openPage("https://" + this.hostUrl + "/" + (this.isKaraoke ? 'karaoke' : 'playlist') + "/?instance=" + this.params.instance + ( this.params.playlist ? "&playlist=" + this.params.playlistId : "") + "&user=" + window.user.id +"-_-"+encodeURIComponent(window.user.name));
   }
+
+  
+  
+  
   setupVolButton(scene, isUp, playlistContainer) {
-    this.setupButton(scene, playlistContainer, isUp ? 1.78 : 1.25, isUp ? '+ vol' : '- vol', '0.5', 'medium', ()=>{
-        this.setVolume(isUp);
-        if(isUp && this.params.mute == 'true') {
-          this.params.mute = 'false';
-          this.sendBrowserMessage({path: Commands.MUTE, data: this.params.mute});
-        }
-        this.sendBrowserMessage({path: Commands.SET_VOLUME, data: this.params.volume});
-    })
+    this.setupButton(scene, playlistContainer, isUp ? 1.78 : 1.25, isUp ? '+ vol' : '- vol', '0.5', 'medium', ()=>this.volume(isUp))
   }
   setupSkipButton(scene, isBack, playlistContainer) {
-    this.setupButton(scene, playlistContainer, isBack ? -0.475 : -0.125, isBack ? '<<' : '>>', '0.5',  'small', () => {
-        this.sendBrowserMessage({path: isBack? Commands.SKIP_BACK : Commands.SKIP_FORWARD});
+    this.setupButton(scene, playlistContainer, isBack ? -0.475 : -0.125, isBack ? '<<' : '>>', '0.5',  'small', () => this.skip(isBack))
+  }
+  skip(isBack) {
+    this.sendBrowserMessage({path: isBack? Commands.SKIP_BACK : Commands.SKIP_FORWARD});
+  }
+  volume(isUp) {
+    this.setVolume(isUp);
+    if(isUp && this.params.mute == 'true') {
+      this.params.mute = 'false';
+      this.sendBrowserMessage({path: Commands.MUTE, data: this.params.mute});
+    }
+    this.sendBrowserMessage({path: Commands.SET_VOLUME, data: this.params.volume});
+  }
+  mute() {
+     this.params.mute = this.params.mute == 'true' ? 'false' : 'true';
+    this.sendBrowserMessage({path: Commands.MUTE, data: this.params.mute});
+  }
+  setupHandControls() {
+    // This was a great innovation by HBR, who wanted Skizot to also get credit for the original idea. 
+    const handControlsContainer = document.createElement("a-entity");
+    handControlsContainer.setAttribute("scale", "0.08 0.08 0.08");
+    handControlsContainer.setAttribute("position", "0.05 0.006 -0.010");
+    handControlsContainer.setAttribute("sq-lefthand", "whoToShow: " + window.user.id);
+    [
+      {
+        image: "https://cdn.glitch.global/47f0acb4-4420-4f3f-bb01-dba17f8c0edb/Playlist.png?v=1711786451727",
+        position: "-1 -0.2 0.4", 
+        callback: () => this.openPlaylist()
+      },
+      {
+        image: "https://cdn.glitch.global/47f0acb4-4420-4f3f-bb01-dba17f8c0edb/Sync_Bk.png?v=1711785429431",
+        position: "-1 -0.2 0", 
+        callback: () => this.sendBrowserMessage({path: Commands.SKIP_BACK})
+      },
+      {
+        image: "https://cdn.glitch.global/47f0acb4-4420-4f3f-bb01-dba17f8c0edb/Sync_FW.png?v=1711785429798",
+        position: "-1 -0.2 -0.4", 
+        callback: () => this.sendBrowserMessage({path: Commands.SKIP_FORWARD})
+      },
+      {
+        image: "https://cdn.glitch.global/47f0acb4-4420-4f3f-bb01-dba17f8c0edb/Vol_Mute_Off.png?v=1711785430667",
+        position: "-1 0.2 0.4", 
+        callback: () => this.mute()
+      },
+      {
+        image: "https://cdn.glitch.global/47f0acb4-4420-4f3f-bb01-dba17f8c0edb/Vol_Dn.png?v=1711785430202",
+        position: "-1 0.2 0", 
+        callback: () => this.volume(false)
+      },
+      {
+        image: "https://cdn.glitch.global/47f0acb4-4420-4f3f-bb01-dba17f8c0edb/Vol_Up.png?v=1711785431096",
+        position: "-1 0.2 -0.4", 
+        callback: () => this.volume(true)
+      }
+    ].forEach(item => {
+      const button = document.createElement("a-plane");
+      button.setAttribute("sq-interactable", "");
+      button.setAttribute("sq-collider", "");
+      button.setAttribute("scale", "0.4 0.4 0.4");
+      button.setAttribute("rotation", "0 -90 180");
+      button.setAttribute("src", item.image);
+      button.setAttribute("transparent", true);
+      button.setAttribute("position", item.position);
+      button.addEventListener("click", () => item.callback());
+      handControlsContainer.appendChild(button);
     })
+    document.querySelector("a-scene").appendChild(handControlsContainer);
   }
   setupMuteButton(scene, playlistContainer) {
-    this.setupButton(scene, playlistContainer, '0.73', 'mute', '0.5',  'medium', () => {
-      this.params.mute = this.params.mute == 'true' ? 'false' : 'true';
-      this.sendBrowserMessage({path: Commands.MUTE, data: this.params.mute});
-    })
+    this.setupButton(scene, playlistContainer, '0.73', 'mute', '0.5',  'medium', () => this.mute())
   }
+  
+  
+
+
+
+
+
   setupButton(scene, playlistContainer, xOffset, title, width, size, callback) {
     const buttonContainer = document.createElement('a-entity');
     
@@ -311,6 +380,8 @@ class Core{
     this.setOrDefault("mute", 'false');
     this.setOrDefault("is3d", 'false');
     this.setOrDefault("announce", 'true');
+
+    this.setOrDefault("hand-controls", 'false');
     this.setOrDefault("mip-maps", '1');
     this.setOrDefault("spatial", 'true');
     this.setOrDefault("geometry", "false");
@@ -354,6 +425,7 @@ class Core{
           this.setupWebsocket(type, messageCallback, connectedCallback, closeCallback);
         }, 1000);
       };
+	this.ws.onerror = (error) => console.log(error);
     });
   }
   setupLatencyMeasure() {

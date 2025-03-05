@@ -1,11 +1,14 @@
 class PlaylistPlayer {
   constructor() {
-    this.hostUrl = 'vidya-player.glitch.me';
+	console.log("constructor");
+    this.hostUrl = 'vidya.sdq.st';
     this.currentScript = Array.from(document.getElementsByTagName('script')).slice(-1)[0];
     this.init();
   }
   async init() {
+	console.log("before setup core");
     await this.setupCoreScript();
+	console.log("setup core?");
     this.core = window.videoPlayerCore;
     this.core.parseParams(this.currentScript);
     // this.core.setupBrowserElement();

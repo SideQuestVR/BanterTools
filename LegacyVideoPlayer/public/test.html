@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+  
+  <head>
+    <title>WebSocket client test</title>
+  </head>
+
+  <body>
+    <h1>WebSocket Client Test</h1>
+    <div id="log"></div>
+  </body>
+
+<script language="javascript" type="text/javascript">
+
+    var wsUri = "wss://vidya.sdq.st";
+    var log;
+
+    function init()
+    {
+      log = document.getElementById("log");
+      testWebSocket();
+    }
+
+    function testWebSocket()
+    {
+      websocket = new WebSocket(wsUri);
+      websocket.onopen    = function(evt) { onOpen(evt)    };
+      websocket.onclose   = function(evt) { onClose(evt)   };
+      websocket.onmessage = function(evt) { onMessage(evt) };
+      websocket.onerror   = function(evt) { onError(evt)   };
+    }
+
+    function onOpen(evt)
+    {
+      writeLog("CONNECTED");
+//      sendMessage("Hello world");
+    }
+
+    function onClose(evt)
+    {
+console.log("onClose");
+console.log(evt);
+
+      writeLog("Websocket DISCONNECTED");
+    }
+
+    function onMessage(evt)
+    {
+      writeLog('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+console.log("onMessage event");
+console.log(evt);
+      websocket.close();
+    }
+
+    function onError(evt)
+    {
+      writeLog('<span style="color: red;">ERROR:</span> ' + evt.data);
+console.log("onerror:");
+     console.log(evt);
+console.log(evt.code);
+    }
+
+    function sendMessage(message)
+    {
+      writeLog("SENT: " + message);
+      websocket.send(message);
+    }
+
+    function writeLog(message)
+    {
+      var pre = document.createElement("p");
+      pre.innerHTML = message;
+      log.appendChild(pre);
+    }
+
+    window.addEventListener("load", init, false);
+
+  </script>

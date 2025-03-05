@@ -1,5 +1,7 @@
-const { WebSocket } = require('@encharm/cws');
+const { WebSocket, secureProtocol } = require('@encharm/cws');
 const express = require('express');
+const cors = require("cors");
+const https = require('https');
 const http = require('http');
 const path = require('path');
 const Youtube = require('./youtube/scraper.js');
@@ -7,6 +9,10 @@ const youtube = new Youtube();
 const ytfps = require('ytfps');
 const fetch = require('node-fetch');
 const Commands = require('../public/commands.js');
+const fs = require("fs");
+const dohttp = false;
+const useletsencrypt = false;
+const { WebSocketServer } = require("ws");
 
 class App{
   constructor() {
@@ -17,15 +23,44 @@ class App{
   }
   setupWebserver() { 
     this.app = express();
+var privateKey = null;
+var certificate = null;
+if (!useletsencrypt) {
+	console.log("dointhewhatever thefucking thing is");    
+privateKey = fs.readFileSync( '/root/vidya/ssl/sdq.st.key' );
+    certificate = fs.readFileSync( '/root/vidya/ssl/sdq.st.cert' );
+} else {
+    privateKey = fs.readFileSync( '/root/vidya/ssl/vidya.sdq.st/privkey.pem' );
+    certificate = fs.readFileSync( '/root/vidya/ssl/vidya.sdq.st/cert.pem' );
+
+}
+
+if (!dohttp) {
+    this.server = https.createServer({key: privateKey,cert: certificate}, this.app);
+} else {
     this.server = http.createServer( this.app ); 
-    this.wss = new WebSocket.Server({ noServer: true }); 
+}
+this.app.use(cors());
+
+this.wss = new WebSocketServer({ server: this.server });
+
+this.wss.on('connection',(ws) =>{
+  ws.on('error', console.error);
+
+ // ws.on('message', function message(data) {
+ //   console.log('received: %s', data);
+ // });
+
+//  ws.send('something');
+/*    this.wss = new WebSocket.Server({noServer: true }); 
     this.server.on('upgrade', (request, socket, head) => {
       this.wss.handleUpgrade(request, socket, head, (ws) => {
+	console.log("connection");
         this.wss.emit('connection', ws, request);
       }); 
     });
     this.wss.startAutoPing(10000);
-    this.wss.on('connection', (ws, req) => {
+    this.wss.on('connection', (ws, req) => {*/
       ws.t = new Date().getTime();
       ws.on('message', msg => { 
         try{
@@ -39,11 +74,15 @@ class App{
         }
       });
       ws.on('close', (code, reason) => {
+//	console.log("ws close: " );
+//	console.log("code: " + code + " reason: " + reason);
         this.handleClose(ws);
       });
+      ws.on("error", error => { console.error("ws error: "); console.log(error);} );
     });
     this.app.use(express.static(path.join(__dirname, '..', 'public')));
-    this.server.listen( 3000, function listening(){
+
+    this.server.listen( dohttp?80:443, function listening(){
         console.log("Video Player started."); 
     });
   }
