@@ -94,7 +94,6 @@ class LeaderBoardsServer{
         }
         room.boards[json.board].scores.sort(room.boards[json.board].sort === "asc" ? (a, b) => a.score - b.score : (a, b) => b.score - a.score);
         
-        console.log(room);
         this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
 
     }catch(e) {
@@ -136,7 +135,7 @@ class LeaderBoardsServer{
                 ws.send(JSON.stringify(data));
             }
         });
-        delete this.broadcastDebounceTimeout[room.id];
+        delete this.broadcastDebounceTimeouts[room.id];
         this.cleanRoom(room);
     }, 100);
   }
