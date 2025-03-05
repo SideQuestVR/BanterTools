@@ -86,8 +86,8 @@ class LeaderBoardsServer{
                 type: json.sort
             };
         }
-        room.boards[json.board].push({id: json.id, name: json.name, score: json.score || 0});
-        room.boards[json.board].sort(room.boards[json.board].sort === "asc" ? (a, b) => a.score - b.score : (a, b) => b.score - a.score);
+        room.boards[json.board].scores.push({id: json.id, name: json.name, score: json.score || 0});
+        room.boards[json.board].scores.sort(room.boards[json.board].sort === "asc" ? (a, b) => a.score - b.score : (a, b) => b.score - a.score);
         this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
 
     }catch(e) {
