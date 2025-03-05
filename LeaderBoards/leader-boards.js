@@ -57,6 +57,7 @@ class LeaderBoardsServer{
     this.rooms = {};
   }
   errorResponse(ws, path, data) {
+    console.log("error: ", data);
     ws.send(JSON.stringify({path, data}));
   }
   getOrCreateRoom(name) {
