@@ -104,7 +104,7 @@ class LeaderBoardsServer{
                     score.score = json.score || 0;
                 }
             }else{
-                room.boards[json.board].scores.push({id: json.id, name: json.name, score: json.score || 0});
+                room.boards[json.board].scores.push({id: json.id, name: json.name, score: json.score || 0, color: json.color});
             }
             room.boards[json.board].scores.sort(room.boards[json.board].sort === "asc" ? (a, b) => a.score - b.score : (a, b) => b.score - a.score);
             
