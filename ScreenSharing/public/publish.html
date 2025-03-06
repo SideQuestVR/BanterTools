@@ -185,7 +185,7 @@
     const useVideo = checkUseVideo();
     const useAudio = checkUseAudio();
 
-    return navigator.mediaDevices.getDisplayMedia({ audio: useAudio, video: { frameRate: fps, height: height, width: width } })
+    return navigator.mediaDevices.getDisplayMedia({ audio: useAudio ? {autoGainControl: false, echoCancellation: false, noiseSuppression: false} : false, video: { frameRate: fps, height: height, width: width } })
       .then((stream) => {
         localStream = stream;
         playVideo(localVideo, localStream);
