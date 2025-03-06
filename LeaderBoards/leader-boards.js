@@ -84,6 +84,11 @@ class LeaderBoardsServer{
         }
         let room = this.getOrCreateRoom(json.room, ws);
         ws.room = json.room;
+        if(json.path === "clear-score") {
+            room.boards[json.board].scores.length = [];
+            this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
+            return;
+        }
         if(json.name && json.id && json.board && json.sort) {
             if(!room.boards[json.board]) {
                 room.boards[json.board] = {
