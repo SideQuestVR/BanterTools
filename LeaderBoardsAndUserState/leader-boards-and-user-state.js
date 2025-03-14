@@ -101,6 +101,7 @@ class LeaderBoardsServer{
   }
   parseMessage(msg, ws) { 
     try{
+        console.log("msg", msg);
         let json = JSON.parse(msg);
         if(!json.room) {
             this.errorResponse(ws, "error", "missing required fields");
@@ -140,6 +141,7 @@ class LeaderBoardsServer{
             break;
           case "get-user-state":
             let promise;
+            console.log("get-user-state", value);
             if(json.key) {
               promise = this.db.hGet(
                 `banter-user-state:${json.room}:${json.id}`,
