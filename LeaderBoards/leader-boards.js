@@ -69,11 +69,8 @@ class LeaderBoardsServer{
   async populateRoom(name) {
     const scores = [];
     // console.log(`banter-leaderboard:${name}:*`,'0');
-    await this.db.hScan(`banter-leaderboard:${name}:*`,'0', (err, res) => {
-      
-      console.log("hi",res,"hi");
-    
-    });
+    const scan = await this.db.hScan(`banter-leaderboard:${name}:*`,'0');
+    console.log(scan);
     // this.db.hScanIterator(`banter-leaderboard:${name}:*`).then(async (it) => {
     //   console.log(it);
     // });
