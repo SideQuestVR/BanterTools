@@ -141,8 +141,8 @@ class LeaderBoardsServer{
             }
             return;
           case "get-user-state":
+            console.log("get-user-state", json);
             let promise;
-            console.log("get-user-state", value);
             if(json.key) {
               promise = this.db.hGet(
                 `banter-user-state:${json.room}:${json.id}`,
