@@ -156,7 +156,7 @@ class LeaderBoardsServer{
                 `banter-user-state:${json.room}:${json.id}`
               )
             }
-            promise.then((err, value) => {
+            promise.then((value) => {
               console.log("value", value);
               ws.send(JSON.stringify({path: "get-user-state", key: json.key, value}));
             });
