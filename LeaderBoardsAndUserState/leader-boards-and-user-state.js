@@ -151,6 +151,7 @@ class LeaderBoardsServer{
               )
             }
             promise.then(value => {
+              console.log("value", value);
               ws.send(JSON.stringify({path: "get-user-state", key: json.key, value}));
             });
             break;
