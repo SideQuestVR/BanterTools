@@ -1,6 +1,8 @@
 const uWS = require('uWebSockets.js');
 const port = 2083;
 let wssClients = [];
+const { createClient } = require('redis');
+
 const app = uWS.SSLApp({
   key_file_name: './ssl.key',
   cert_file_name: './ssl.cert'
@@ -38,7 +40,7 @@ const app = uWS.SSLApp({
    console.log("ping");
   },
   pong: async (ws) => {
-   console.log("pong");
+  //  console.log("pong");
   }
 }).any('/*', (res, req) => {
   res.end('Nothing to see here!');
@@ -49,17 +51,32 @@ const app = uWS.SSLApp({
     console.log('Failed to listen to port ' + port);
   }
 });
-
-
  
 class LeaderBoardsServer{
   constructor() {
     this.rooms = {};
+    this.db = createClient();
+    this.db.on('error', err => console.log('Redis Client Error', err));
+    this.init();
+  }
+  async init() {
+    await this.db.connect();
   }
   errorResponse(ws, path, data) {
     console.log("error: ", data);
     ws.send(JSON.stringify({path, data}));
   }
+  async populateRoom(name) {
+    const scores = [];
+    for await (const key of client.scan({ MATCH: `banter-leaderboard:${name}:*` })) {
+      scores.push(await client.get(key));
+    }
+    console.log("scores: ", scores);
+    // this.rooms[name].sockets.forEach(ws => {
+    //   this.sendWholeRoom(this.rooms[name], ws);
+    // });
+  }
+
   getOrCreateRoom(name, ws) {
     if(!this.rooms[name]) {
       this.rooms[name] = {
@@ -67,6 +84,7 @@ class LeaderBoardsServer{
         sockets: [ws],
         boards: {}
       };
+      this.populateRoom(name);
     }else{
         if(!this.rooms[name].sockets.includes(ws)) {
             this.rooms[name].sockets.push(ws);
@@ -74,9 +92,12 @@ class LeaderBoardsServer{
     }
     return this.rooms[name];
   }
+  async testDb(key) {
+    let userSession = await client.hGetAll(key);
+    console.log(JSON.stringify(userSession, null, 2));
+  }
   parseMessage(msg, ws) { 
     try{
-        // console.log(msg);
         let json = JSON.parse(msg);
         if(!json.room) {
             this.errorResponse(ws, "error", "missing required fields");
@@ -85,6 +106,7 @@ class LeaderBoardsServer{
         let room = this.getOrCreateRoom(json.room, ws);
         ws.room = json.room;
         if(json.path === "clear-board") {
+            Promise.all(room.boards[json.board].scores.map(score => this.db.hDel(`banter-leaderboard:${json.room}:${json.board}:${score.id}`)));
             room.boards[json.board].scores.length = [];
             this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
             return;
@@ -98,27 +120,43 @@ class LeaderBoardsServer{
                 };
             }
             const score = room.boards[json.board].scores.find(score => score.id === json.id);
+
             if(score) {
                 // need to only update the score if its higher/lower.
                 if((score.score < json.score && json.sort === "asc") || (score.score > json.score && json.sort !== "asc")) {
                     score.score = json.score || 0;
                 }
+                this.db.hSet(
+                  `banter-leaderboard:${json.room}:${json.board}:${json.id}`,
+                  {score: json.score || 0, name: json.name}
+                ).then(()=>this.testDb(`banter-leaderboard:${json.room}:${json.board}:${json.id}`));
             }else{
+                this.db.hSet(
+                  `banter-leaderboard:${json.room}:${json.board}:${json.id}`,
+                  {id: json.id, name: json.name, score: json.score || 0, color: json.color}
+                ).then(()=>this.testDb(`banter-leaderboard:${json.room}:${json.board}:${json.id}`));
                 room.boards[json.board].scores.push({id: json.id, name: json.name, score: json.score || 0, color: json.color});
             }
+
             room.boards[json.board].scores.sort(room.boards[json.board].sort === "asc" ? (a, b) => a.score - b.score : (a, b) => b.score - a.score);
             
             this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
         }else{
             Object.keys(room.boards).forEach(b => {
                 const board = room.boards[b];
-                // console.log({path: "update-scores", board: board.board, scores: board});
                 ws.send(JSON.stringify({path: "update-scores", board: board.board, scores: board}));
             });
+            this.sendWholeRoom(room, ws);
         }
     }catch(e) {
         this.errorResponse(ws, "error", e.message);
     }
+  }
+  sendWholeRoom(room, ws) {
+    Object.keys(room.boards).forEach(b => {
+      const board = room.boards[b];
+      ws.send(JSON.stringify({path: "update-scores", board: board.board, scores: board}));
+    });
   }
   cleanRoom(room) {
     // Clean up disconected websockets from the room.
