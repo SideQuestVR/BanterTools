@@ -120,7 +120,7 @@ class LeaderBoardsServer{
             room.boards[json.board].scores.length = [];
             this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
             return;
-          case "save-user-state":
+          case "set-user-state":
             const state = {};
             state[json.key] = json.value;
             this.db.hSet(
