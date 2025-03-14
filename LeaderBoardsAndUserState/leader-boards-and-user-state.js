@@ -109,7 +109,6 @@ class LeaderBoardsServer{
 
         json.room = encodeURIComponent(json.room);
         json.board = encodeURIComponent(json.board);
-       
 
         let room = this.getOrCreateRoom(json.room, ws);
         ws.room = json.room;
