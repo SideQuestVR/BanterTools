@@ -109,10 +109,11 @@ class LeaderBoardsServer{
 
         json.room = encodeURIComponent(json.room);
         json.board = encodeURIComponent(json.board);
-        console.log("msg", json);
+       
 
         let room = this.getOrCreateRoom(json.room, ws);
         ws.room = json.room;
+        console.log("msg", json);
         switch(json.path) {
           case "clear-board":
             this.clearDbItems(room.boards[json.board].scores, json);
