@@ -98,7 +98,7 @@ class LeaderBoardsServer{
     return this.rooms[name];
   }
   async testDb(key) {
-    let userSession = await client.hGetAll(key);
+    let userSession = await this.db.hGetAll(key);
     console.log(JSON.stringify(userSession, null, 2));
   }
   parseMessage(msg, ws) { 
