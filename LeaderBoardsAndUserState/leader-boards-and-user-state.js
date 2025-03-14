@@ -123,6 +123,9 @@ class LeaderBoardsServer{
           case "set-user-state":
             const state = {};
             state[json.key] = json.value;
+            console.log(
+              `banter-user-state:${json.room}:${json.id}`,
+              state);
             this.db.hSet(
               `banter-user-state:${json.room}:${json.id}`,
               state
