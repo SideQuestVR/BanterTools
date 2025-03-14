@@ -96,11 +96,8 @@ class LeaderBoardsServer{
     }
     return this.rooms[name];
   }
-  async testDb(key) {
-    let userSession = await this.db.hGetAll(key);
-    console.log(JSON.stringify(userSession, null, 2));
-  }
   clearDbItems(scores, json) {
+    console.log("clearing db items", scores);
     Promise.all(scores.map(score => this.db.del(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${score.id}`)));
   }
   parseMessage(msg, ws) { 
