@@ -118,7 +118,7 @@ class LeaderBoardsServer{
             this.clearDbItems(room.boards[json.board].scores, json);
             room.boards[json.board].scores.length = [];
             this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
-            break;
+            return;
           case "save-user-state":
             const state = {};
             state[json.key] = json.value;
@@ -126,7 +126,7 @@ class LeaderBoardsServer{
               `banter-user-state:${json.room}:${json.id}`,
               state
             );
-            break;
+            return;
           case "remove-user-state":
             if(json.key) {
               this.db.hDel(
@@ -138,7 +138,7 @@ class LeaderBoardsServer{
                 `banter-user-state:${json.room}:${json.id}`
               )
             }
-            break;
+            return;
           case "get-user-state":
             let promise;
             console.log("get-user-state", value);
@@ -156,7 +156,7 @@ class LeaderBoardsServer{
               console.log("value", value);
               ws.send(JSON.stringify({path: "get-user-state", key: json.key, value}));
             });
-            break;
+            return;
           default:
             if(json.name && json.id && json.board && json.sort) {
                 if(!room.boards[json.board]) {
