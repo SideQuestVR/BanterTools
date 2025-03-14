@@ -133,12 +133,12 @@ class LeaderBoardsServer{
                 this.db.hSet(
                   `banter-leaderboard:${json.room}:${json.board}:${json.id}`,
                   {score: json.score || 0, name: json.name}
-                ).then(()=>this.testDb(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${json.id}`));
+                );
             }else{
                 this.db.hSet(
                   `banter-leaderboard:${json.room}:${json.board}:${json.id}`,
                   {id: json.id, name: json.name, score: json.score || 0, color: json.color || ''}
-                ).then(()=>this.testDb(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${json.id}`));
+                );
                 room.boards[json.board].scores.push({id: json.id, name: json.name, score: json.score || 0, color: json.color || ''});
             }
 
