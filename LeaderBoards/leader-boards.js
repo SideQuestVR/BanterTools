@@ -100,6 +100,9 @@ class LeaderBoardsServer{
     let userSession = await this.db.hGetAll(key);
     console.log(JSON.stringify(userSession, null, 2));
   }
+  clearDbItems(scores, json) {
+    Promise.all(scores.map(score => this.db.hDel(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${score.id}`)));
+  }
   parseMessage(msg, ws) { 
     try{
         let json = JSON.parse(msg);
@@ -110,7 +113,7 @@ class LeaderBoardsServer{
         let room = this.getOrCreateRoom(json.room, ws);
         ws.room = json.room;
         if(json.path === "clear-board") {
-            Promise.all(room.boards[json.board].scores.map(score => this.db.hDel(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${score.id}`)));
+            this.clearDbItems(room.boards[json.board].scores, json);
             room.boards[json.board].scores.length = [];
             this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
             return;
@@ -143,7 +146,11 @@ class LeaderBoardsServer{
             }
 
             room.boards[json.board].scores.sort(room.boards[json.board].sort === "asc" ? (a, b) => a.score - b.score : (a, b) => b.score - a.score);
-            
+            if(room.boards[json.board].scores.length > 20) {
+              const extras = room.boards[json.board].scores.slice(20);
+              this.clearDbItems(extras, json);
+              room.boards[json.board].scores.length = 20;
+            }
             this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
         }else{
             Object.keys(room.boards).forEach(b => {
