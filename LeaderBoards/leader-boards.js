@@ -69,14 +69,15 @@ class LeaderBoardsServer{
   async populateRoom(name) {
     const scores = [];
     // console.log(`banter-leaderboard:${name}:*`,'0');
-    const scan = await this.db.scan(0, {MATCH: 'banter*'});
-    console.log(scan);
+    // const scan = await ;
+    // console.log(scan);
     // this.db.hScanIterator(`banter-leaderboard:${name}:*`).then(async (it) => {
     //   console.log(it);
     // });
-    // for await (const key of ) {
-    //   scores.push(await this.db.get(key));
-    // }
+    for await (const key of this.db.scan(0, {MATCH: 'banter*'})) {
+      console.log(key);
+      // scores.push(await this.db.get(key));
+    }
     // console.log("scores: ", scores);
     // this.rooms[name].sockets.forEach(ws => {
     //   this.sendWholeRoom(this.rooms[name], ws);
