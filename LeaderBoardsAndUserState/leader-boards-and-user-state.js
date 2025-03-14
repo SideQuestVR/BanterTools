@@ -101,7 +101,6 @@ class LeaderBoardsServer{
   }
   parseMessage(msg, ws) { 
     try{
-        console.log("msg", msg);
         let json = JSON.parse(msg);
         if(!json.room) {
             this.errorResponse(ws, "error", "missing required fields");
@@ -110,6 +109,7 @@ class LeaderBoardsServer{
 
         json.room = encodeURIComponent(json.room);
         json.board = encodeURIComponent(json.board);
+        console.log("msg", json);
 
         let room = this.getOrCreateRoom(json.room, ws);
         ws.room = json.room;
