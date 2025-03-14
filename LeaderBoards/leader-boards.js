@@ -101,7 +101,7 @@ class LeaderBoardsServer{
     console.log(JSON.stringify(userSession, null, 2));
   }
   clearDbItems(scores, json) {
-    Promise.all(scores.map(score => this.db.hDel(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${score.id}`)));
+    Promise.all(scores.map(score => this.db.del(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${score.id}`)));
   }
   parseMessage(msg, ws) { 
     try{
