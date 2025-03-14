@@ -68,8 +68,8 @@ class LeaderBoardsServer{
   }
   async populateRoom(name) {
     const scores = [];
-    for await (const key of client.scan({ MATCH: `banter-leaderboard:${name}:*` })) {
-      scores.push(await client.get(key));
+    for await (const key of this.db.scan({ MATCH: `banter-leaderboard:${name}:*` })) {
+      scores.push(await this.db.get(key));
     }
     console.log("scores: ", scores);
     // this.rooms[name].sockets.forEach(ws => {
