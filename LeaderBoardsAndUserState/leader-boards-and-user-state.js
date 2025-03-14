@@ -112,52 +112,90 @@ class LeaderBoardsServer{
 
         let room = this.getOrCreateRoom(json.room, ws);
         ws.room = json.room;
-        if(json.path === "clear-board") {
+        switch(json.path) {
+          case "clear-board":
             this.clearDbItems(room.boards[json.board].scores, json);
             room.boards[json.board].scores.length = [];
             this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
-            return;
-        }
-        if(json.name && json.id && json.board && json.sort) {
-            if(!room.boards[json.board]) {
-                room.boards[json.board] = {
-                    scores: [],
-                    sort: json.sort,
-                    board: json.board
-                };
-            }
-            const score = room.boards[json.board].scores.find(score => score.id === json.id);
-
-            if(score) {
-                // need to only update the score if its higher/lower.
-                if((score.score < json.score && json.sort === "asc") || (score.score > json.score && json.sort !== "asc")) {
-                    score.score = json.score || 0;
-                }
-                this.db.hSet(
-                  `banter-leaderboard:${json.room}:${json.board}:${json.id}`,
-                  {score: json.score || 0, name: json.name}
-                );
+            break;
+          case "save-user-state":
+            const state = {};
+            state[json.key] = json.value;
+            this.db.hSet(
+              `banter-user-state:${json.room}:${json.id}`,
+              state
+            );
+            break;
+          case "remove-user-state":
+            if(json.key) {
+              this.db.hDel(
+                `banter-user-state:${json.room}:${json.id}`,
+                json.key
+              )
             }else{
-                this.db.hSet(
-                  `banter-leaderboard:${json.room}:${json.board}:${json.id}`,
-                  {id: json.id, name: json.name, score: json.score || 0, color: json.color || ''}
-                );
-                room.boards[json.board].scores.push({id: json.id, name: json.name, score: json.score || 0, color: json.color || ''});
+              this.db.del(
+                `banter-user-state:${json.room}:${json.id}`
+              )
             }
-
-            room.boards[json.board].scores.sort(room.boards[json.board].sort === "asc" ? (a, b) => a.score - b.score : (a, b) => b.score - a.score);
-            if(room.boards[json.board].scores.length > 20) {
-              const extras = room.boards[json.board].scores.slice(20);
-              this.clearDbItems(extras, json);
-              room.boards[json.board].scores.length = 20;
+            break;
+          case "get-user-state":
+            let promise;
+            if(json.key) {
+              promise = this.db.hGet(
+                `banter-user-state:${json.room}:${json.id}`,
+                json.key
+              )
+            }else{
+              promise = this.db.hGetAll(
+                `banter-user-state:${json.room}:${json.id}`
+              )
             }
-            this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
-        }else{
-            Object.keys(room.boards).forEach(b => {
-                const board = room.boards[b];
-                ws.send(JSON.stringify({path: "update-scores", board: board.board, scores: board}));
+            promise.then(value => {
+              ws.send(JSON.stringify({path: "get-user-state", key: json.key, value}));
             });
-            this.sendWholeRoom(room, ws);
+            break;
+          default:
+            if(json.name && json.id && json.board && json.sort) {
+                if(!room.boards[json.board]) {
+                    room.boards[json.board] = {
+                        scores: [],
+                        sort: json.sort,
+                        board: json.board
+                    };
+                }
+                const score = room.boards[json.board].scores.find(score => score.id === json.id);
+
+                if(score) {
+                    // need to only update the score if its higher/lower.
+                    if((score.score < json.score && json.sort === "asc") || (score.score > json.score && json.sort !== "asc")) {
+                        score.score = json.score || 0;
+                    }
+                    this.db.hSet(
+                      `banter-leaderboard:${json.room}:${json.board}:${json.id}`,
+                      {score: json.score || 0, name: json.name}
+                    );
+                }else{
+                    this.db.hSet(
+                      `banter-leaderboard:${json.room}:${json.board}:${json.id}`,
+                      {id: json.id, name: json.name, score: json.score || 0, color: json.color || ''}
+                    );
+                    room.boards[json.board].scores.push({id: json.id, name: json.name, score: json.score || 0, color: json.color || ''});
+                }
+
+                room.boards[json.board].scores.sort(room.boards[json.board].sort === "asc" ? (a, b) => a.score - b.score : (a, b) => b.score - a.score);
+                if(room.boards[json.board].scores.length > 20) {
+                  const extras = room.boards[json.board].scores.slice(20);
+                  this.clearDbItems(extras, json);
+                  room.boards[json.board].scores.length = 20;
+                }
+                this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
+            }else{
+                Object.keys(room.boards).forEach(b => {
+                    const board = room.boards[b];
+                    ws.send(JSON.stringify({path: "update-scores", board: board.board, scores: board}));
+                });
+                this.sendWholeRoom(room, ws);
+            }   
         }
     }catch(e) {
         this.errorResponse(ws, "error", e.message);
