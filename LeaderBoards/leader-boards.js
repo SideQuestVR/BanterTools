@@ -69,21 +69,22 @@ class LeaderBoardsServer{
   async populateRoom(name) {
     const scores = [];
     // console.log(`banter-leaderboard:${name}:*`,'0');
-    const scan = await this.db.scan(0, {MATCH: 'banter*'});
+    const scan = await this.db.scan(0, {MATCH: `banter-leaderboard:${name}:*`});
     for(let i = 0; i < scan.keys.length; i++) {
-      scores.push(await this.db.hGetAll(scan.keys[i]));
+      const parts = scan.keys[i].split(":");
+      if(!this.rooms[name].boards[parts[2]]) {
+        this.rooms[name].boards[parts[2]] = {
+          scores: [],
+          sort: parts[3],
+          board: parts[2]
+        };
+      }
+      this.rooms[name].boards[parts[2]].scores.push(await this.db.hGetAll(scan.keys[i]));
     }
-    // this.db.hScanIterator(`banter-leaderboard:${name}:*`).then(async (it) => {
-    //   console.log(it);
-    // });
-    // for await (const key of this.db.scan(0, {MATCH: 'banter*'})) {
-    //   console.log(key);
-      // 
-    // }
-    console.log("scores: ", scores);
-    // this.rooms[name].sockets.forEach(ws => {
-    //   this.sendWholeRoom(this.rooms[name], ws);
-    // });
+    console.log("scores: ", this.rooms[name]);
+    this.rooms[name].sockets.forEach(ws => {
+      this.sendWholeRoom(this.rooms[name], ws);
+    });
   }
 
   getOrCreateRoom(name, ws) {
@@ -115,7 +116,7 @@ class LeaderBoardsServer{
         let room = this.getOrCreateRoom(json.room, ws);
         ws.room = json.room;
         if(json.path === "clear-board") {
-            Promise.all(room.boards[json.board].scores.map(score => this.db.hDel(`banter-leaderboard:${json.room}:${json.board}:${score.id}`)));
+            Promise.all(room.boards[json.board].scores.map(score => this.db.hDel(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${score.id}`)));
             room.boards[json.board].scores.length = [];
             this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
             return;
@@ -138,12 +139,12 @@ class LeaderBoardsServer{
                 this.db.hSet(
                   `banter-leaderboard:${json.room}:${json.board}:${json.id}`,
                   {score: json.score || 0, name: json.name}
-                ).then(()=>this.testDb(`banter-leaderboard:${json.room}:${json.board}:${json.id}`));
+                ).then(()=>this.testDb(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${json.id}`));
             }else{
                 this.db.hSet(
                   `banter-leaderboard:${json.room}:${json.board}:${json.id}`,
                   {id: json.id, name: json.name, score: json.score || 0, color: json.color || ''}
-                ).then(()=>this.testDb(`banter-leaderboard:${json.room}:${json.board}:${json.id}`));
+                ).then(()=>this.testDb(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${json.id}`));
                 room.boards[json.board].scores.push({id: json.id, name: json.name, score: json.score || 0, color: json.color || ''});
             }
 
