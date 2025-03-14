@@ -68,7 +68,7 @@ class LeaderBoardsServer{
   }
   async populateRoom(name) {
     const scores = [];
-    for await (const key of this.db.hScan(`banter-leaderboard:${name}:*`, '0')) {
+    for await (const key of this.db.hScanIterator(`banter-leaderboard:${name}:*`, '0')) {
       scores.push(await this.db.get(key));
     }
     console.log("scores: ", scores);
