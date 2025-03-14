@@ -97,7 +97,6 @@ class LeaderBoardsServer{
     return this.rooms[name];
   }
   clearDbItems(scores, json) {
-    console.log("clearing db items", scores);
     Promise.all(scores.map(score => this.db.del(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${score.id}`)));
   }
   parseMessage(msg, ws) { 
@@ -107,6 +106,10 @@ class LeaderBoardsServer{
             this.errorResponse(ws, "error", "missing required fields");
             return;
         }
+
+        json.room = encodeURIComponent(json.room);
+        json.board = encodeURIComponent(json.board);
+
         let room = this.getOrCreateRoom(json.room, ws);
         ws.room = json.room;
         if(json.path === "clear-board") {
