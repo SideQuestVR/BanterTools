@@ -71,7 +71,7 @@ class LeaderBoardsServer{
     // console.log(`banter-leaderboard:${name}:*`,'0');
     const scan = await this.db.scan(0, {MATCH: 'banter*'});
     for(let i = 0; i < scan.keys.length; i++) {
-      scores.push(await this.db.get(scan.keys[i]));
+      scores.push(await this.db.hGetAll(scan.keys[i]));
     }
     // this.db.hScanIterator(`banter-leaderboard:${name}:*`).then(async (it) => {
     //   console.log(it);
