@@ -113,7 +113,6 @@ class LeaderBoardsServer{
 
         let room = this.getOrCreateRoom(json.room, ws);
         ws.room = json.room;
-        console.log("msg", json);
         switch(json.path) {
           case "clear-board":
             this.clearDbItems(room.boards[json.board].scores, json);
@@ -123,9 +122,6 @@ class LeaderBoardsServer{
           case "set-user-state":
             const state = {};
             state[json.key] = json.value;
-            console.log(
-              `banter-user-state:${json.room}:${json.id}`,
-              state);
             this.db.hSet(
               `banter-user-state:${json.room}:${json.id}`,
               state
@@ -144,7 +140,6 @@ class LeaderBoardsServer{
             }
             return;
           case "get-user-state":
-            console.log("get-user-state", json);
             let promise;
             if(json.key) {
               promise = this.db.hGet(
@@ -157,7 +152,6 @@ class LeaderBoardsServer{
               )
             }
             promise.then((value) => {
-              console.log("value", value);
               ws.send(JSON.stringify({path: "get-user-state", key: json.key, value}));
             });
             return;
