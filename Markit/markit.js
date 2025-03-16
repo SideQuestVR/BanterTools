@@ -23,7 +23,7 @@ const https = require('https');
     const server = https.createServer({key: privateKey,cert: certificate}, app);
     app.use(cors());
 
-    // app.use(express.static(path.join(__dirname, '..', 'public')));
+    app.use(express.static(path.join(__dirname, 'public')));
 
     server.listen(2096, function listening(){
         console.log("Markit started."); 
