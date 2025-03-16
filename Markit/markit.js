@@ -5,7 +5,7 @@ const path = require('path');
     const pass = fs.readFileSync(path.join(__dirname,'db.txt'), 'utf8');
     console.log(pass.substring(0,4));
     const db = new Client({
-        user: 'postgres',
+        user: 'markit',
         password: pass,
         host: 'localhost',
         port: 5432,
