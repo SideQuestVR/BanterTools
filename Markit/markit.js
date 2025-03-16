@@ -26,7 +26,7 @@ const https = require('https');
     // app.use(express.static(path.join(__dirname, '..', 'public')));
 
     server.listen(2096, function listening(){
-        console.log("Video Player started."); 
+        console.log("Markit started."); 
     });
     
     try {
