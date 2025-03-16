@@ -53,7 +53,7 @@ const https = require('https');
         }
     });
 
-    app.get('/kits/categories', async (req, res) => {
+    app.get('/kits_categories', async (req, res) => {
         const { rows } = await db.query('SELECT * FROM kit_categories', []);
         res.send(JSON.stringify(rows));
     });
