@@ -68,7 +68,7 @@ const https = require('https');
         res.send({});
     });
 
-    app.get('/kits/:page/:sort/:category?/:search?', async (req, res) => {
+    app.get('/kits/:page/:sort-:direction/:category?/:search?', async (req, res) => {
         const params = [req.params.page || 0, req.params.sort || 'created_at'];
         if(req.params.category) params.push(req.params.category);
         if(req.params.search) params.push("%" + req.params.search + "%");
@@ -76,7 +76,7 @@ const https = require('https');
             'SELECT * FROM kits WHERE TRUE ' + 
             (req.params.category ? 'AND kit_categories_id = $3 ' : '') + 
             (req.params.search ? 'AND (name ILIKE $4 OR description ILIKE $4) ' : '') + 
-            'ORDER BY $2 OFFSET $1 LIMIT 10', 
+            'ORDER BY $2 ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10', 
             params );
         res.send(JSON.stringify(rows));
     });
