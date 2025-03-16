@@ -8,7 +8,7 @@ const path = require('path');
         user: 'postgres',
         password: pass,
         host: 'localhost',
-        port: 3211,
+        port: 5432,
         database: 'mydb',
     })
     await db.connect()
