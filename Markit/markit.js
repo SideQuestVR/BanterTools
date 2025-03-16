@@ -73,7 +73,7 @@ const https = require('https');
         if(req.params.category) params.push(req.params.category);
         if(req.params.search) params.push("%" + req.params.search + "%");
         const { rows } = await db.query(
-            'SELECT * FROM kits WHERE 1 ' + 
+            'SELECT * FROM kits WHERE TRUE ' + 
             (req.params.category ? 'AND kit_categories_id = $3 ' : '') + 
             (req.params.search ? 'AND (name ILIKE $4 OR description ILIKE $4) ' : '') + 
             'ORDER BY $2 OFFSET $1 LIMIT 10', 
