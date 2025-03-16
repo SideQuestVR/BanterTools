@@ -17,11 +17,8 @@ const https = require('https');
     await db.connect();
 
     const app = express();
-    const privateKey = null;
-    const certificate = null;
-     
-    privateKey = fs.readFileSync( '../LegacyVideoPlayer/ssl/sdq.st.key' );
-    certificate = fs.readFileSync( '../LegacyVideoPlayer/ssl/sdq.st.cert' );
+    const privateKey = fs.readFileSync( '../LegacyVideoPlayer/ssl/sdq.st.key' );
+    const certificate = fs.readFileSync( '../LegacyVideoPlayer/ssl/sdq.st.cert' );
     
     const server = https.createServer({key: privateKey,cert: certificate}, app);
     app.use(cors());
