@@ -50,3 +50,6 @@ CREATE TABLE kit_categories (
 
 
 ALTER TABLE kits ADD COLUMN kit_categories_id bigint NOT NULL, ADD FOREIGN KEY (kit_categories_id) REFERENCES kit_categories(id) ON DELETE CASCADE;
+
+ALTER TABLE kits ADD use_count bigint DEFAULT 0;
+ALTER TABLE kit_items ADD use_count bigint DEFAULT 0;

@@ -53,9 +53,19 @@ const https = require('https');
         }
     });
 
-    app.get('/kit_categories', async (req, res) => {
+    app.get('/kits/categories', async (req, res) => {
         const { rows } = await db.query('SELECT * FROM kit_categories');
         res.send(JSON.stringify(rows));
+    });
+
+    app.get('/kits/use/:id', async (req, res) => {
+        const { rows } = await db.query('UPDATE kits SET use_count = use_count + 1 WHERE id = $1', [req.params.id]);
+        res.send({});
+    });
+
+    app.get('/kits/items/use/:id', async (req, res) => {
+        const { rows } = await db.query('UPDATE kit_items SET use_count = use_count + 1 WHERE id = $1', [req.params.id]);
+        res.send({});
     });
 
     app.get('/kits/:page/:sort', async (req, res) => {
