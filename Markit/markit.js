@@ -1,7 +1,11 @@
 const { Client } = require('pg');
+const fs = require('fs');
+const path = require('path');
 (async()=>{
-
-    const db = new Client()
+    const db = new Client({
+        user: 'postgres',
+        password: fs.readFileSync(path.join(__dirname,'db.txt'), 'utf8'),
+    })
     await db.connect()
     
     try {
