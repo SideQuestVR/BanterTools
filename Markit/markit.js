@@ -53,6 +53,11 @@ const https = require('https');
         }
     });
 
+    app.get('/kit_categories', async (req, res) => {
+        const { rows } = await db.query('SELECT * FROM kit_categories');
+        res.send(JSON.stringify(rows));
+    });
+
     app.get('/kits/:page/:sort', async (req, res) => {
         const { rows } = await db.query('SELECT * FROM kits ORDER BY $2 OFFSET $1 LIMIT 10', [req.params.page, req.params.sort]);
         res.send(JSON.stringify(rows));

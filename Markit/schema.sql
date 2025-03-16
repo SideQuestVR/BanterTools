@@ -25,7 +25,6 @@ CREATE TABLE kits (
   FOREIGN KEY (users_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-
 CREATE TABLE kit_items (
   id BIGSERIAL PRIMARY KEY NOT NULL,
   users_id BIGINT NOT NULL,
@@ -37,3 +36,17 @@ CREATE TABLE kit_items (
   FOREIGN KEY (kits_id) REFERENCES kits(id) ON DELETE CASCADE,
   FOREIGN KEY (users_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+
+
+CREATE TABLE kit_categories (
+  id BIGSERIAL PRIMARY KEY NOT NULL,
+  name varchar(1024) NOT NULL,
+  description varchar(16000) DEFAULT NULL,
+  picture varchar(2048) DEFAULT NULL,
+  item_count int DEFAULT 0,
+  created_at timestamp DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE kits ADD COLUMN kit_categories_id bigint NOT NULL, ADD FOREIGN KEY (kit_categories_id) REFERENCES kit_categories(id) ON DELETE CASCADE;
