@@ -25,7 +25,7 @@ const https = require('https');
 
     // app.use(express.static(path.join(__dirname, '..', 'public')));
 
-    server.listen(443, function listening(){
+    server.listen(2096, function listening(){
         console.log("Video Player started."); 
     });
     
