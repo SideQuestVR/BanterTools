@@ -68,11 +68,16 @@ const https = require('https');
         res.send({});
     });
 
-    app.get('/kits/:page/:sort/:category?', async (req, res) => {
+    app.get('/kits/:page/:sort/:category?/:search?', async (req, res) => {
         const params = [req.params.page || 0, req.params.sort || 'created_at'];
         if(req.params.category) params.push(req.params.category);
+        if(req.params.search) params.push("%" + req.params.search + "%");
         const { rows } = await db.query(
-            'SELECT * FROM kits ' + (req.params.category ? 'WHERE kit_categories_id = $3' : '') + ' ORDER BY $2 OFFSET $1 LIMIT 10', 
+            'SELECT * FROM kits ' + 
+            (req.params.category || req.params.search ? 'WHERE ' : '') + 
+            (req.params.category ? 'kit_categories_id = $3 ' : '') + 
+            (req.params.category ? '(name ILIKE = $4 OR description ILIKE $4) ' : '') + 
+            'ORDER BY $2 OFFSET $1 LIMIT 10', 
             params );
         res.send(JSON.stringify(rows));
     });
