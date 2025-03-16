@@ -74,7 +74,7 @@ const https = require('https');
         if(req.params.search) params.push("%" + req.params.search + "%");
         const { rows } = await db.query(
             'SELECT * FROM kits WHERE kit_categories_id = $3 ' + 
-            (req.params.search ? ' AND (name ILIKE = $4 OR description ILIKE $4) ' : '') + 
+            (req.params.search ? ' AND (name ILIKE $4 OR description ILIKE $4) ' : '') + 
             'ORDER BY $2 OFFSET $1 LIMIT 10', 
             params );
         res.send(JSON.stringify(rows));
