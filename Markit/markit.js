@@ -55,7 +55,7 @@ const https = require('https');
 
     app.get('/kits/:page/:sort', async (req, res) => {
         const { kits } = await db.query('SELECT * FROM kits ORDER BY $2 OFFSET $1 LIMIT 10', [req.params.page, req.params.sort]);
-        res.send(kits);
+        res.send(JSON.stringify(kits));
     });
 
     server.listen(2096, function listening(){
