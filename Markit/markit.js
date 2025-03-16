@@ -27,25 +27,25 @@ const https = require('https');
     app.use(express.static(path.join(__dirname, 'public')));
 
     app.post('/kits', async (req, res) => {
-        const { users } = await db.query('SELECT * FROM users WHERE ext_id = $1', [req.body.users_id]);
-        if(users.length == 0){
+        const users = await db.query('SELECT * FROM users WHERE ext_id = $1', [req.body.users_id]);
+        if(users.rows.length == 0){
             res.status(404);
             res.send('{"error", "User not found"}');
             return;
         }
 
-        const { kits } = await db.query('INSERT INTO kits (users_id, name, description, picture, android, windows, item_count) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id', [users[0].id, req.body.name]);
-        res.send('{"created": ' + kits[0] + '}');
+        const { rows } = await db.query('INSERT INTO kits (users_id, name, description, picture, android, windows, item_count) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id', [users[0].id, req.body.name]);
+        res.send('{"created": ' + rows[0] + '}');
     });
 
     app.get('/kits/:id', async (req, res) => {
-        const { kits } = await db.query('SELECT * FROM kits WHERE id = $1', [req.params.id]);
-        const kit = kits[0];
+        const kits = await db.query('SELECT * FROM kits WHERE id = $1', [req.params.id]);
+        const kit = kits.rows[0];
         if(kit) {
-            const { users } = await db.query('SELECT * FROM users WHERE id = $1', [kit.users_id]);
-            kit.user = users[0];
-            const { kitItems } = await db.query('SELECT * FROM kit_items WHERE kits_id = $1', [req.params.id]);
-            kit.items = kitItems;
+            const users = await db.query('SELECT * FROM users WHERE id = $1', [kit.users_id]);
+            kit.user = users.rows[0];
+            const items = await db.query('SELECT * FROM kit_items WHERE kits_id = $1', [req.params.id]);
+            kit.items = items.rows;
             res.send(JSON.stringify(kit));
         }else{
             res.status(404);
@@ -54,9 +54,8 @@ const https = require('https');
     });
 
     app.get('/kits/:page/:sort', async (req, res) => {
-        const { kits } = await db.query('SELECT * FROM kits ORDER BY $2 OFFSET $1 LIMIT 10', [req.params.page, req.params.sort]);
-        console.log(kits);
-        res.send(JSON.stringify(kits));
+        const { rows } = await db.query('SELECT * FROM kits ORDER BY $2 OFFSET $1 LIMIT 10', [req.params.page, req.params.sort]);
+        res.send(JSON.stringify(rows));
     });
 
     server.listen(2096, function listening(){
