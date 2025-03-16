@@ -6,7 +6,7 @@ const path = require('path');
     console.log(pass.substring(0,4));
     const db = new Client({
         user: 'postgres',
-        password: pass,
+        password: pass.trim(),
         host: 'localhost',
         port: 5432,
         database: 'mydb',
