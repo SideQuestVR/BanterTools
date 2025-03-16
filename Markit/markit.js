@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 (async()=>{
     const pass = fs.readFileSync(path.join(__dirname,'db.txt'), 'utf8');
-    console.log(pass.substring(0,4));
     const db = new Client({
         user: 'postgres',
         password: pass.trim(),
@@ -19,6 +18,6 @@ const path = require('path');
     } catch (err) {
         console.error(err);
     } finally {
-        await client.end()
+        await db.end()
     }
 })();
