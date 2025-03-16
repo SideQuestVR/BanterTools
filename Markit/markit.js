@@ -9,7 +9,7 @@ const path = require('path');
         password: pass.trim(),
         host: 'localhost',
         port: 5432,
-        database: 'mydb',
+        database: 'markit',
     })
     await db.connect()
     
