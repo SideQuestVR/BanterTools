@@ -38,6 +38,11 @@ const https = require('https');
         res.send('{"created": ' + rows[0] + '}');
     });
 
+    app.get('/kits/categories', async (req, res) => {
+        const { rows } = await db.query('SELECT * FROM kit_categories', []);
+        res.send(JSON.stringify(rows));
+    });
+
     app.get('/kits/:id', async (req, res) => {
         const kits = await db.query('SELECT * FROM kits WHERE id = $1', [req.params.id]);
         const kit = kits.rows[0];
@@ -51,11 +56,6 @@ const https = require('https');
             res.status(404);
             res.send('{"error", "Kit not found"}');
         }
-    });
-
-    app.get('/kits_categories', async (req, res) => {
-        const { rows } = await db.query('SELECT * FROM kit_categories', []);
-        res.send(JSON.stringify(rows));
     });
 
     app.get('/kits/use/:id', async (req, res) => {
