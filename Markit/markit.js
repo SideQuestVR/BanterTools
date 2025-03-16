@@ -68,8 +68,12 @@ const https = require('https');
         res.send({});
     });
 
-    app.get('/kits/:page/:sort', async (req, res) => {
-        const { rows } = await db.query('SELECT * FROM kits ORDER BY $2 OFFSET $1 LIMIT 10', [req.params.page, req.params.sort]);
+    app.get('/kits/:page?/:sort?/:category?', async (req, res) => {
+        const params = [req.params.page || 0, req.params.sort || 'created_at'];
+        if(req.params.category) params.push(req.params.category);
+        const { rows } = await db.query(
+            'SELECT * FROM kits ' + (req.params.category ? 'WHERE kit_categories_id = $3' : '') + ' ORDER BY $2 OFFSET $1 LIMIT 10', 
+            params );
         res.send(JSON.stringify(rows));
     });
 
