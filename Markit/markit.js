@@ -24,7 +24,6 @@ const https = require('https');
     const server = https.createServer({key: privateKey,cert: certificate}, app);
     app.use(cors());
     app.use(bodyParser.json())
-    app.use(express.static(path.join(__dirname, 'public')));
 
     app.post('/kits', async (req, res) => {
         const users = await db.query('SELECT * FROM users WHERE ext_id = $1', [req.body.users_id]);
@@ -34,7 +33,13 @@ const https = require('https');
             return;
         }
 
-        const { rows } = await db.query('INSERT INTO kits (users_id, name, description, picture, android, windows, item_count) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id', [users[0].id, req.body.name]);
+        const { rows } = await db.query(`
+            INSERT INTO kits 
+            (users_id, name, description, picture, android, windows, item_count, kit_categories_id) 
+            VALUES 
+            ($1, $2, $3, $4, $5, $6, $7, $8) 
+            RETURNING id`, 
+            [users[0].id, req.body.name, req.body.description, req.body.picture, req.body.android, req.body.windows, req.body.item_count, req.body.kit_categories_id]);
         res.send('{"created": ' + rows[0] + '}');
     });
 
