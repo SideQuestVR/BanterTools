@@ -64,7 +64,7 @@ const https = require('https');
     });
 
     app.get('/user/:users_id', async (req, res) => {
-        const { rows } = await db.query('SELECT * FROM users WHERE users_id IN (SELECT id AS users_id FROM users where ext_id = $1) OR users_id = $1', [req.params.user_id]);
+        const { rows } = await db.query('SELECT * FROM users WHERE id IN (SELECT id FROM users where ext_id = $1) OR users_id = $1', [req.params.user_id]);
         res.send(rows);
     });
     app.get('/kits/user/:users_id', async (req, res) => {
