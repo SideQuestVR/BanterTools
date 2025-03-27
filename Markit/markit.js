@@ -40,12 +40,12 @@ const https = require('https');
             ($1, $2, $3, $4, $5, $6, $7, $8) 
             RETURNING id`, 
             [users[0].id, req.body.name, req.body.description, req.body.picture, req.body.android, req.body.windows, req.body.item_count, req.body.kit_categories_id]);
-        res.send({rows});
+        res.send(JSON.stringify({rows}));
     });
 
     app.get('/kit/categories', async (req, res) => {
         const { rows } = await db.query('SELECT * FROM kit_categories', []);
-        res.send({rows});
+        res.send(JSON.stringify({rows}));
     });
 
     app.get('/kit/:id', async (req, res) => {
@@ -65,7 +65,7 @@ const https = require('https');
 
     app.get('/user/:users_id', async (req, res) => {
         const { rows } = await db.query('SELECT * FROM users WHERE id IN (SELECT id FROM users where ext_id = $1) OR id::text = $1', [req.params.users_id]);
-        res.send({rows});
+        res.send(JSON.stringify({rows}));
     });
 
     app.post('/user', async (req, res) => {
@@ -76,22 +76,22 @@ const https = require('https');
             ($1, $2, $3, $4, $5) 
             RETURNING id`, 
             [req.body.ext_id, req.body.name, req.body.profile_pic, req.body.color, req.body.bio]);
-        res.send({rows});
+        res.send(JSON.stringify({rows}));
     });
 
     app.get('/kits/user/:users_id', async (req, res) => {
         const { rows } = await db.query('SELECT * FROM kits WHERE users_id IN (SELECT id AS users_id FROM users where ext_id = $1)', [req.params.users_id]);
-        res.send({rows});
+        res.send(JSON.stringify({rows}));
     });
 
     app.get('/kit/use/:id', async (req, res) => {
         await db.query('UPDATE kits SET use_count = use_count + 1 WHERE id = $1', [req.params.id]);
-        res.send({});
+        res.send(JSON.stringify({}));
     });
 
     app.get('/kit/items/use/:id', async (req, res) => {
         await db.query('UPDATE kit_items SET use_count = use_count + 1 WHERE id = $1', [req.params.id]);
-        res.send({});
+        res.send(JSON.stringify({}));
     });
 
     app.get('/kits/:page/:sort-:direction/:category?/:search?', async (req, res) => {
@@ -104,7 +104,7 @@ const https = require('https');
             (req.params.search ? 'AND (name ILIKE $4 OR description ILIKE $4) ' : '') + 
             'ORDER BY $2 ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10', 
             params );
-        res.send({rows});
+        res.send(JSON.stringify({rows}));
     });
 
     server.listen(2096, function listening(){
