@@ -73,7 +73,7 @@ const https = require('https');
             INSERT INTO users 
             (ext_id, name, profile_pic, color, bio) 
             VALUES 
-            ($1, $2, $3, $4, $5, $6) 
+            ($1, $2, $3, $4, $5) 
             RETURNING id`, 
             [req.body.ext_id, req.body.name, req.body.profile_pic, req.body.color, req.body.bio]);
         res.send('{"created": ' + rows[0] + '}');
