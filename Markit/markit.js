@@ -45,7 +45,7 @@ const https = require('https');
 
     app.get('/kits/categories', async (req, res) => {
         const { rows } = await db.query('SELECT * FROM kit_categories', []);
-        res.send(JSON.stringify(rows));
+        res.send(rows);
     });
 
     app.get('/kits/:id', async (req, res) => {
@@ -56,20 +56,24 @@ const https = require('https');
             kit.user = users.rows[0];
             const items = await db.query('SELECT * FROM kit_items WHERE kits_id = $1', [req.params.id]);
             kit.items = items.rows;
-            res.send(JSON.stringify(kit));
+            res.send(kit);
         }else{
             res.status(404);
             res.send('{"error", "Kit not found"}');
         }
     });
 
+    app.get('/kits/user/:users_id', async (req, res) => {
+        const { rows } = await db.query('SELECT * FROM kits WHERE users_id IN (SELECT users_id FROM users where ext_id = $1)', [req.params.user_id]);
+        res.send(rows);
+    });
     app.get('/kits/use/:id', async (req, res) => {
-        const { rows } = await db.query('UPDATE kits SET use_count = use_count + 1 WHERE id = $1', [req.params.id]);
+        await db.query('UPDATE kits SET use_count = use_count + 1 WHERE id = $1', [req.params.id]);
         res.send({});
     });
 
     app.get('/kits/items/use/:id', async (req, res) => {
-        const { rows } = await db.query('UPDATE kit_items SET use_count = use_count + 1 WHERE id = $1', [req.params.id]);
+        await db.query('UPDATE kit_items SET use_count = use_count + 1 WHERE id = $1', [req.params.id]);
         res.send({});
     });
 
@@ -83,7 +87,7 @@ const https = require('https');
             (req.params.search ? 'AND (name ILIKE $4 OR description ILIKE $4) ' : '') + 
             'ORDER BY $2 ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10', 
             params );
-        res.send(JSON.stringify(rows));
+        res.send(rows);
     });
 
     server.listen(2096, function listening(){
