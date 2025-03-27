@@ -40,7 +40,7 @@ const https = require('https');
             ($1, $2, $3, $4, $5, $6, $7, $8) 
             RETURNING id`, 
             [users[0].id, req.body.name, req.body.description, req.body.picture, req.body.android, req.body.windows, req.body.item_count, req.body.kit_categories_id]);
-        res.send('{"created": ' + rows[0] + '}');
+        res.send({rows});
     });
 
     app.get('/kit/categories', async (req, res) => {
@@ -76,7 +76,7 @@ const https = require('https');
             ($1, $2, $3, $4, $5) 
             RETURNING id`, 
             [req.body.ext_id, req.body.name, req.body.profile_pic, req.body.color, req.body.bio]);
-        res.send('{"created": ' + rows[0] + '}');
+        res.send({rows});
     });
 
     app.get('/kits/user/:users_id', async (req, res) => {
