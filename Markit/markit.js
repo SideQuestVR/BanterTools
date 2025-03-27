@@ -43,12 +43,12 @@ const https = require('https');
         res.send('{"created": ' + rows[0] + '}');
     });
 
-    app.get('/kits/categories', async (req, res) => {
+    app.get('/kit/categories', async (req, res) => {
         const { rows } = await db.query('SELECT * FROM kit_categories', []);
         res.send(rows);
     });
 
-    app.get('/kits/:id', async (req, res) => {
+    app.get('/kit/:id', async (req, res) => {
         const kits = await db.query('SELECT * FROM kits WHERE id = $1', [req.params.id]);
         const kit = kits.rows[0];
         if(kit) {
@@ -63,16 +63,20 @@ const https = require('https');
         }
     });
 
+    app.get('/user/:users_id', async (req, res) => {
+        const { rows } = await db.query('SELECT * FROM users WHERE users_id IN (SELECT users_id FROM users where ext_id = $1) OR users_id = $1', [req.params.user_id]);
+        res.send(rows);
+    });
     app.get('/kits/user/:users_id', async (req, res) => {
         const { rows } = await db.query('SELECT * FROM kits WHERE users_id IN (SELECT users_id FROM users where ext_id = $1)', [req.params.user_id]);
         res.send(rows);
     });
-    app.get('/kits/use/:id', async (req, res) => {
+    app.get('/kit/use/:id', async (req, res) => {
         await db.query('UPDATE kits SET use_count = use_count + 1 WHERE id = $1', [req.params.id]);
         res.send({});
     });
 
-    app.get('/kits/items/use/:id', async (req, res) => {
+    app.get('/kit/items/use/:id', async (req, res) => {
         await db.query('UPDATE kit_items SET use_count = use_count + 1 WHERE id = $1', [req.params.id]);
         res.send({});
     });
