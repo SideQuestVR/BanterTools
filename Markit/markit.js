@@ -36,7 +36,7 @@ const https = require('https');
             return;
         }
         let rows = [];
-        const kits = await db.query('SELECT id FROM kits WHERE id = $1', [req.body.id]);
+        const kits = await db.query('SELECT id FROM kits WHERE id = $1', [req.body.id||0]);
         if(kits.rows.length > 0){
             const userTest = await fetch("https://api.sidequestvr.com/v2/users/me/apps/me/achievements", {headers: {Authorization: `Bearer ${req.body.access_token}`}});
             if(userTest.status != 200){
