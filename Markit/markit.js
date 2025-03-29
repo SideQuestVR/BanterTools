@@ -32,16 +32,35 @@ const https = require('https');
             res.send('{"error", "User not found"}');
             return;
         }
-
-        const { rows } = await db.query(`
-            INSERT INTO kits 
-            (users_id, name, description, picture, android, windows, item_count, kit_categories_id) 
-            VALUES 
-            ($1, $2, $3, $4, $5, $6, $7, $8) 
-            RETURNING id`, 
-            [users[0].id, req.body.name, req.body.description, req.body.picture, req.body.android, req.body.windows, req.body.item_count, req.body.kit_categories_id]);
-        
-            if(rows.length) {
+        let rows = [];
+        const kits = await db.query('SELECT id FROM kits WHERE id = $1', [req.body.id]);
+        if(kits.rows.length > 0){
+            await db.query(`
+                UPDATE kits 
+                SET name = $1, 
+                description = $2, 
+                picture = $3, 
+                android = $4, 
+                windows = $5, 
+                item_count = $6, 
+                kit_categories_id = $7
+                WHERE id = $8`, 
+                [req.body.name, req.body.description, req.body.picture, req.body.android, req.body.windows, req.body.items.length, req.body.kit_categories_id]);
+            await db.query('DELETE FROM kit_items WHERE kits_id = $1', [req.body.id]);
+            rows = kits.rows;
+            
+        }else{
+            const inserted = await db.query(`
+                INSERT INTO kits 
+                (users_id, name, description, picture, android, windows, item_count, kit_categories_id) 
+                VALUES 
+                ($1, $2, $3, $4, $5, $6, $7, $8) 
+                RETURNING id`, 
+                [users[0].id, req.body.name, req.body.description, req.body.picture, req.body.android, req.body.windows, req.body.items.length, req.body.kit_categories_id]);
+            
+            rows = inserted.rows;
+        }
+        if(rows.length) {
             req.body.items.forEach(async (item) => {
                 const res = await db.query(`
                     INSERT INTO kit_items
@@ -49,10 +68,9 @@ const https = require('https');
                     VALUES
                     ($1, $2, $3, $4) RETURNING id`, 
                     [rows[0].id, item.name, item.path, item.picture]);
-                console.log(res.rows);
             });
         }
-        
+    
         res.send(JSON.stringify({rows}));
     });
 
