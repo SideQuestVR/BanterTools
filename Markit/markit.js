@@ -26,6 +26,7 @@ const https = require('https');
     app.use(bodyParser.json())
 
     app.post('/kit', async (req, res) => {
+        console.log(req.body);
         const users = await db.query('SELECT * FROM users WHERE ext_id = $1', [req.body.users_id]);
         if(users.rows.length == 0){
             res.status(404);
