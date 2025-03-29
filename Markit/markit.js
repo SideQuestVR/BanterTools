@@ -1,6 +1,6 @@
 const { Client } = require('pg');
 const express = require('express');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 const cors = require("cors");
@@ -38,6 +38,12 @@ const https = require('https');
         let rows = [];
         const kits = await db.query('SELECT id FROM kits WHERE id = $1', [req.body.id]);
         if(kits.rows.length > 0){
+            const userTest = await fetch("https://api.sidequestvr.com/v2/users/1/apps/1/rating", {headers: {Authorization: `Bearer ${req.body.access_token}`}});
+            if(userTest.status != 200){
+                res.status(403);
+                res.send('{"error", "Invalid access token"}');
+                return;
+            }
             await db.query(`
                 UPDATE kits 
                 SET name = $1, 
