@@ -59,14 +59,13 @@ const https = require('https');
             rows = kits.rows;
             
         }else{
-            console.log(users);
             const inserted = await db.query(`
                 INSERT INTO kits 
                 (users_id, name, description, picture, android, windows, item_count, kit_categories_id) 
                 VALUES 
                 ($1, $2, $3, $4, $5, $6, $7, $8) 
                 RETURNING id`, 
-                [users[0].id, req.body.name, req.body.description, req.body.picture, req.body.android, req.body.windows, req.body.items.length, req.body.kit_categories_id]);
+                [users.rows[0].id, req.body.name, req.body.description, req.body.picture, req.body.android, req.body.windows, req.body.items.length, req.body.kit_categories_id]);
             
             rows = inserted.rows;
         }
