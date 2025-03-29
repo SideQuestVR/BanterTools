@@ -59,6 +59,7 @@ const https = require('https');
             rows = kits.rows;
             
         }else{
+            console.log(users);
             const inserted = await db.query(`
                 INSERT INTO kits 
                 (users_id, name, description, picture, android, windows, item_count, kit_categories_id) 
