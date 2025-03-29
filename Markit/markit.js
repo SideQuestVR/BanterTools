@@ -48,7 +48,7 @@ const https = require('https');
                 item_count = $6, 
                 kit_categories_id = $7
                 WHERE id = $8`, 
-                [req.body.name, req.body.description, req.body.picture, req.body.android, req.body.windows, req.body.items.length, req.body.kit_categories_id]);
+                [req.body.name, req.body.description, req.body.picture, req.body.android, req.body.windows, req.body.items.length, req.body.kit_categories_id, kits.rows[0].id]);
             await db.query('DELETE FROM kit_items WHERE kits_id = $1', [req.body.id]);
             rows = kits.rows;
             
