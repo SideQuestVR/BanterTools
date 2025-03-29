@@ -27,14 +27,12 @@ CREATE TABLE kits (
 
 CREATE TABLE kit_items (
   id BIGSERIAL PRIMARY KEY NOT NULL,
-  users_id BIGINT NOT NULL,
   kits_id BIGINT NOT NULL,
   name varchar(1024) NOT NULL,
-  description varchar(16000) DEFAULT NULL,
+  path varchar(2048) NOT NULL,
   picture varchar(2048) DEFAULT NULL,
   created_at timestamp DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (kits_id) REFERENCES kits(id) ON DELETE CASCADE,
-  FOREIGN KEY (users_id) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY (kits_id) REFERENCES kits(id) ON DELETE CASCADE
 );
 
 

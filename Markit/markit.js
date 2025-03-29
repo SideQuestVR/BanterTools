@@ -40,6 +40,19 @@ const https = require('https');
             ($1, $2, $3, $4, $5, $6, $7, $8) 
             RETURNING id`, 
             [users[0].id, req.body.name, req.body.description, req.body.picture, req.body.android, req.body.windows, req.body.item_count, req.body.kit_categories_id]);
+        
+            if(rows.length) {
+            req.body.items.forEach(async (item) => {
+                const res = await db.query(`
+                    INSERT INTO kit_items
+                    (kits_id, name, path, picture)
+                    VALUES
+                    ($1, $2, $3, $4) RETURNING id`, 
+                    [rows[0].id, item.name, item.path, item.picture]);
+                console.log(res.rows);
+            });
+        }
+        
         res.send(JSON.stringify({rows}));
     });
 
