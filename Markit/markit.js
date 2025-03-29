@@ -23,7 +23,9 @@ const https = require('https');
     
     const server = https.createServer({key: privateKey,cert: certificate}, app);
     app.use(cors());
-    app.use(bodyParser.json())
+    app.use(bodyParser.json({
+        limit: '50mb'
+    }))
 
     app.post('/kit', async (req, res) => {
         console.log(req.body);
