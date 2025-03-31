@@ -34,7 +34,7 @@ app.get('/v1/chunk/:keys', async (req, res) => {
     }
 
 
-    res.send(Buffer.concat(chunks.filter(chunk=>chunk).map((chunk) => Buffer.concat(bufferFromInt(chunk.length), chunk))));
+    res.send(Buffer.concat(chunks.filter(chunk=>chunk).map((chunk) => Buffer.concat([bufferFromInt(chunk.length), chunk]))));
 });
 
 app.get('/v1/chunk/delete/:key', async (req, res) => {
