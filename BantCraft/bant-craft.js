@@ -28,11 +28,9 @@ app.get('/v1/chunk/:keys', async (req, res) => {
     // Filled 8 bits number
     const fillByte = 0xff;
     function bufferFromInt(num){
-        const buffArr = [];
-        do {
-            buffArr.push(fillByte & num);
-        } while(num >>= 8);
-        return Buffer.from(buffArr.reverse())
+        let buf = Buffer.allocUnsafe(4);  // Init buffer without writing all data to zeros
+        buf.writeInt32LE(num); 
+        return buf;
     }
 
 
