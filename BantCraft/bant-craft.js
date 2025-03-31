@@ -25,7 +25,18 @@ app.get('/v1/chunk/:keys', async (req, res) => {
     const keys = req.params.keys.split(",").map((key) => `bant-craft:${key}`);
     const chunks = await db.mGet(commandOptions({ returnBuffers: true }), keys);
     console.log(chunks.filter(chunk=>chunk), keys);
-    res.send(Buffer.concat(chunks.filter(chunk=>chunk).map((chunk) => Buffer.concat(Buffer.from(chunk.length), chunk))));
+    // Filled 8 bits number
+    const fillByte = 0xff;
+    function bufferFromInt(num){
+        const buffArr = [];
+        do {
+            buffArr.push(fillByte & num);
+        } while(num >>= 8);
+        return Buffer.from(buffArr.reverse())
+    }
+
+
+    res.send(Buffer.concat(chunks.filter(chunk=>chunk).map((chunk) => Buffer.concat(Buffer.from(bufferFromInt(chunk.length)), chunk))));
 });
 
 app.get('/v1/chunk/delete/:key', async (req, res) => {
