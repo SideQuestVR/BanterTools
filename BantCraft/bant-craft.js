@@ -24,9 +24,6 @@ db.connect();
 app.get('/v1/chunk/:keys', async (req, res) => {
     const keys = req.params.keys.split(",").map((key) => `bant-craft:${key}`);
     const chunks = await db.mGet(commandOptions({ returnBuffers: true }), keys);
-    console.log(chunks.filter(chunk=>chunk));
-    // Filled 8 bits number
-    const fillByte = 0xff;
     function bufferFromInt(num){
         let buf = Buffer.allocUnsafe(4);  // Init buffer without writing all data to zeros
         buf.writeInt32LE(num); 
