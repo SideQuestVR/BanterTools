@@ -23,7 +23,7 @@ db.connect();
 
 app.get('/v1/chunk/:keys', async (req, res) => {
     const keys = req.params.keys.split(",").map((key) => `bant-craft:${key}`);
-    const chunks = await db.mGet(keys);
+    const chunks = await db.mGet(redis.commandOptions({ returnBuffers: true }), keys);
     console.log(chunks, keys);
     res.send(Buffer.concat(chunks.filter(chunk=>chunk).map((chunk) => Buffer.concat(Buffer.from(chunk.length), chunk))));
 });
