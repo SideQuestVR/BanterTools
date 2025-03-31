@@ -37,7 +37,7 @@ app.get('/v1/chunk/delete/:key', async (req, res) => {
 
 
 app.post('/v1/chunk/save/:key', async (req, res) => {
-    console.log(req.body);
+    console.log("body", req.body);
     db.set(
         `bant-craft:${req.params.key}`,
         req.body
