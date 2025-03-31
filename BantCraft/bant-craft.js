@@ -25,7 +25,7 @@ app.get('/v1/chunk/:keys', async (req, res) => {
     const keys = req.params.keys.split(",").map((key) => `bant-craft:${key}`);
     const chunks = await db.mGet(keys);
     console.log(chunks, keys);
-    res.send(Buffer.concat(chunks.map((chunk) => Buffer.concat(Buffer.from(chunk.length), chunk))));
+    res.send(Buffer.concat(chunks.filter(chunk=>chunk).map((chunk) => Buffer.concat(Buffer.from(chunk.length), chunk))));
 });
 
 app.get('/v1/chunk/delete/:key', async (req, res) => {
@@ -37,6 +37,7 @@ app.get('/v1/chunk/delete/:key', async (req, res) => {
 
 
 app.post('/v1/chunk/save/:key', async (req, res) => {
+    console.log(req.body);
     db.set(
         `bant-craft:${req.params.key}`,
         req.body
