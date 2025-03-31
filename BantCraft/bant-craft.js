@@ -25,6 +25,7 @@ app.get('/v1/chunk/:keys', async (req, res) => {
     const chunks = await db.mGet(
         req.params.keys.split(",").map((key) => `bant-craft:${key}`)
     );
+    console.log(chunks);
     res.send(Buffer.concat(chunks.map((chunk) => Buffer.concat(Buffer.from(chunk.length), chunk))));
 });
 
