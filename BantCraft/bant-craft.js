@@ -22,10 +22,9 @@ db.on('error', err => console.log('Redis Client Error', err));
 db.connect();
 
 app.get('/v1/chunk/:keys', async (req, res) => {
-    const chunks = await db.mGet(
-        req.params.keys.split(",").map((key) => `bant-craft:${key}`)
-    );
-    console.log(chunks);
+    const keys = req.params.keys.split(",").map((key) => `bant-craft:${key}`);
+    const chunks = await db.mGet(keys);
+    console.log(chunks, keys);
     res.send(Buffer.concat(chunks.map((chunk) => Buffer.concat(Buffer.from(chunk.length), chunk))));
 });
 
