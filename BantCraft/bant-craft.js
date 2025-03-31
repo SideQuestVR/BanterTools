@@ -22,14 +22,14 @@ db.on('error', err => console.log('Redis Client Error', err));
 db.connect();
 
 app.get('/v1/chunk/:keys', async (req, res) => {
-    const chunks = await this.db.mGet(
+    const chunks = await db.mGet(
         req.params.keys.split(",").map((key) => `bant-craft:${key}`)
     );
     res.send(Buffer.concat(chunks.map((chunk) => Buffer.concat(Buffer.from(chunk.length), chunk))));
 });
 
 app.get('/v1/chunk/delete/:key', async (req, res) => {
-    this.db.del(
+    db.del(
         `bant-craft:${req.params.key}`
     );
     res.send("ok");
@@ -37,7 +37,7 @@ app.get('/v1/chunk/delete/:key', async (req, res) => {
 
 
 app.post('/v1/chunk/save/:key', async (req, res) => {
-    this.db.set(
+    db.set(
         `bant-craft:${req.params.key}`,
         req.body
     );
