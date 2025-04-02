@@ -45,7 +45,7 @@ const https = require('https');
         return true;
     }
     app.post('/kit/delete/:id', async (req, res) => {
-        console.log("Deleted kit-2", user);
+        console.log("Deleted kit-3");
         const user = await getUsers(req, res);
         console.log("Deleted kit-2", user);
         if(!user) return;
