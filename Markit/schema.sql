@@ -21,6 +21,7 @@ CREATE TABLE kits (
   android varchar(2048) DEFAULT NULL,
   windows varchar(2048) DEFAULT NULL,
   item_count int DEFAULT 0,
+  deleted boolean DEFAULT FALSE,
   created_at timestamp DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (users_id) REFERENCES users(id) ON DELETE CASCADE
 );

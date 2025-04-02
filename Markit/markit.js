@@ -26,24 +26,43 @@ const https = require('https');
     app.use(bodyParser.json({
         limit: '50mb'
     }))
-
-    app.post('/kit', async (req, res) => {
-        console.log(req.body);
+    const getUsers = async (req) => {
         const users = await db.query('SELECT * FROM users WHERE ext_id = $1', [req.body.users_id]);
         if(users.rows.length == 0){
             res.status(404);
             res.send('{"error", "User not found"}');
-            return;
+            return null;
         }
+        return users[0];
+    };
+    const authUser = async (res, req) => {
+        const userTest = await fetch("https://api.sidequestvr.com/v2/users/" + req.body.users_id + "/apps/me/achievements", {headers: {Authorization: `Bearer ${req.body.access_token}`}});
+        if(userTest.status != 200){
+            res.status(403);
+            res.send('{"error", "Invalid access token"}');
+            return false;
+        }
+        return true;
+    }
+    app.post('/kit/delete/:id', async (req, res) => {
+        const user = await getUsers(req);
+        if(!user) return;
+        const kits = await db.query('SELECT id FROM kits WHERE id = $1', [req.params.id||0]);
+        if(kits.rows.length > 0){
+            if(!await authUser(res, req)) return;
+            await db.query('UPADTE kits SET deleted = TRUE WHERE id = $1', [kits.rows[0].id]);
+            res.send(JSON.stringify({deleted: kits.rows[0].id}));
+        }else{
+            res.send('{"error", "Kit not found"}');
+        }
+    });
+    app.post('/kit', async (req, res) => {
+        const user = await getUsers(req);
+        if(!user) return;
         let rows = [];
         const kits = await db.query('SELECT id FROM kits WHERE id = $1', [req.body.id||0]);
         if(kits.rows.length > 0){
-            const userTest = await fetch("https://api.sidequestvr.com/v2/users/me/apps/me/achievements", {headers: {Authorization: `Bearer ${req.body.access_token}`}});
-            if(userTest.status != 200){
-                res.status(403);
-                res.send('{"error", "Invalid access token"}');
-                return;
-            }
+            if(!await authUser(res, req)) return;
             await db.query(`
                 UPDATE kits 
                 SET name = $1, 
@@ -120,7 +139,7 @@ const https = require('https');
     });
 
     app.get('/kits/user/:users_id', async (req, res) => {
-        const { rows } = await db.query('SELECT * FROM kits WHERE users_id IN (SELECT id AS users_id FROM users where ext_id = $1)', [req.params.users_id]);
+        const { rows } = await db.query('SELECT * FROM kits WHERE deleted = FALSE AND users_id IN (SELECT id AS users_id FROM users where ext_id = $1)', [req.params.users_id]);
         res.send(JSON.stringify({rows}));
     });
 
@@ -135,11 +154,11 @@ const https = require('https');
     });
 
     app.get('/kits/:page/:sort-:direction/:category?/:search?', async (req, res) => {
-        const params = [req.params.page || 0, req.params.sort || 'created_at'];
+        const params = [req.params.page || 0, req.params.sort || 'use_count,name'];
         if(req.params.category) params.push(req.params.category);
         if(req.params.search) params.push("%" + req.params.search + "%");
         const { rows } = await db.query(
-            'SELECT * FROM kits WHERE TRUE ' + 
+            'SELECT * FROM kits WHERE deleted = FALSE ' + 
             (req.params.category ? 'AND kit_categories_id = $3 ' : '') + 
             (req.params.search ? 'AND (name ILIKE $4 OR description ILIKE $4) ' : '') + 
             'ORDER BY $2 ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10', 
