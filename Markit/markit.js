@@ -84,7 +84,7 @@ const https = require('https');
                 VALUES 
                 ($1, $2, $3, $4, $5, $6, $7, $8) 
                 RETURNING id`, 
-                [users.rows[0].id, req.body.name, req.body.description, req.body.picture, req.body.android, req.body.windows, req.body.items.length, req.body.kit_categories_id]);
+                [user.id, req.body.name, req.body.description, req.body.picture, req.body.android, req.body.windows, req.body.items.length, req.body.kit_categories_id]);
             
             rows = inserted.rows;
         }
