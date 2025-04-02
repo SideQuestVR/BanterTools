@@ -152,14 +152,16 @@ const https = require('https');
         await db.query('UPDATE kit_items SET use_count = use_count + 1 WHERE id = $1', [req.params.id]);
         res.send(JSON.stringify({}));
     });
+    const sortFields = ["name", "created_at", "use_count"];
     app.get('/kits/:page/:sort-:direction/:category?/:search?', async (req, res) => {
-        const params = [req.params.page || 0, req.params.sort || 'use_count,name'];
+        const params = [req.params.page || 0];
+
         if(req.params.category && req.params.category !== "0") params.push(req.params.category);
         if(req.params.search) params.push("%" + req.params.search + "%");
         const qry = 'SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, kits.kit_categories_id, users.ext_id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE ' + 
-            (req.params.category && req.params.category !== "0"? 'AND kits.kit_categories_id = $3 ' : '') + 
-            (req.params.search ? 'AND (kits.name ILIKE $4 OR kits.description ILIKE $4) ' : '') + 
-            'ORDER BY $2 ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10';
+            (req.params.category && req.params.category !== "0"? 'AND kits.kit_categories_id = $2 ' : '') + 
+            (req.params.search ? 'AND (kits.name ILIKE $4 OR kits.description ILIKE $3) ' : '') + 
+            'ORDER BY ' + (sortFields.includes(req.params.sort) ? req.params.sort + ',name' : "use_count") + ' ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10';
             console.log(qry, params);
         const { rows } = await db.query(
             qry, 
