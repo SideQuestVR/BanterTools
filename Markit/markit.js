@@ -154,14 +154,16 @@ const https = require('https');
     });
     const sortFields = ["name", "created_at", "use_count"];
     app.get('/kits/:page/:sort-:direction/:category?/:search?', async (req, res) => {
-        const params = [req.params.page ? parseInt(req.params.page) * 13 : 0];
+        const offset = req.params.page ? parseInt(req.params.page) * 13 : 0;
+        const params = [];
         const hasCategory = req.params.category && req.params.category !== "0";
         if(hasCategory) params.push(req.params.category);
         if(req.params.search) params.push("%" + req.params.search + "%");
         const qry = 'SELECT kits.id, kits.name, kits.use_count, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, kits.kit_categories_id, users.ext_id as users_id, users.name as user_name FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE ' + 
-            (hasCategory? 'AND kits.kit_categories_id = $2 ' : '') + 
-            (req.params.search ? 'AND (kits.name ILIKE $' + (hasCategory ? 3 : 2) +' OR kits.description ILIKE $' + (hasCategory ? 3 : 2) +') ' : '') + 
-            'ORDER BY ' + (sortFields.includes(req.params.sort) ? req.params.sort : "use_count") + ' ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ', name ASC OFFSET $1 LIMIT 13';
+            (hasCategory? 'AND kits.kit_categories_id = $1 ' : '') + 
+            (req.params.search ? 'AND (kits.name ILIKE $' + (hasCategory ? 2 : 1) +' OR kits.description ILIKE $' + (hasCategory ? 2 : 1) +') ' : '') + 
+            'ORDER BY ' + (sortFields.includes(req.params.sort) ? req.params.sort : "use_count") + ' ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ', name ASC OFFSET ' + offset + ' LIMIT 13';
+        
         const { rows } = await db.query(
             qry, 
             params );
