@@ -109,7 +109,7 @@ const https = require('https');
     });
 
     app.get('/kit/:id', async (req, res) => {
-        const kits = await db.query('SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, users.id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE kits.id = $1', [req.params.id]);
+        const kits = await db.query('SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, users.ext_id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE kits.id = $1', [req.params.id]);
         const kit = kits.rows[0];
         if(kit) {
             const users = await db.query('SELECT * FROM users WHERE id = $1', [kit.users_id]);
@@ -140,7 +140,7 @@ const https = require('https');
     });
 
     app.get('/kits/user/:users_id', async (req, res) => {
-        const { rows } = await db.query('SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, users.id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE AND users_id IN (SELECT id AS users_id FROM users where ext_id = $1)', [req.params.users_id]);
+        const { rows } = await db.query('SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, users.ext_id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE AND users_id IN (SELECT id AS users_id FROM users where ext_id = $1)', [req.params.users_id]);
         res.send(JSON.stringify({rows}));
     });
 
@@ -168,7 +168,7 @@ const https = require('https');
         if(req.params.category) params.push(req.params.category);
         if(req.params.search) params.push("%" + req.params.search + "%");
         const { rows } = await db.query(
-            'SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, users.id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE ' + 
+            'SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, users.ext_id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE ' + 
             (req.params.category ? 'AND kit_categories_id = $3 ' : '') + 
             (req.params.search ? 'AND (name ILIKE $4 OR description ILIKE $4) ' : '') + 
             'ORDER BY $2 ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10', 
