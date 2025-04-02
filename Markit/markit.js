@@ -160,7 +160,7 @@ const https = require('https');
             'SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, kits.kit_categories_id, users.ext_id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE ' + 
             (req.params.category ? 'AND kits.kit_categories_id = $3 ' : '') + 
             (req.params.search ? 'AND (kits.name ILIKE $4 OR kits.description ILIKE $4) ' : '') + 
-            'ORDER BY kits.$2 ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10', 
+            'ORDER BY $2 ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10', 
             params );
         res.send(JSON.stringify({rows}));
     });
