@@ -154,7 +154,7 @@ const https = require('https');
     });
     const sortFields = ["name", "created_at", "use_count"];
     app.get('/kits/:page/:sort-:direction/:category?/:search?', async (req, res) => {
-        const params = [req.params.page || 0];
+        const params = [req.params.page ? parseInt(req.params.page) * 13 : 0];
         const hasCategory = req.params.category && req.params.category !== "0";
         if(hasCategory) params.push(req.params.category);
         if(req.params.search) params.push("%" + req.params.search + "%");
