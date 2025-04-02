@@ -54,7 +54,7 @@ const https = require('https');
         if(kits.rows.length > 0){
             console.log("Deleted kit0", kits.rows[0].id);
             if(!await authUser(res, req)) return;
-            await db.query('UPADTE kits SET deleted = TRUE WHERE id = $1', [kits.rows[0].id]);
+            await db.query('UPDATE kits SET deleted = TRUE WHERE id = $1', [kits.rows[0].id]);
             console.log("Deleted kit", kits.rows[0].id);
             res.send(JSON.stringify({deleted: kits.rows[0].id}));
         }else{
