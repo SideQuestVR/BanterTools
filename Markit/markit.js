@@ -160,7 +160,7 @@ const https = require('https');
             (req.params.category && req.params.category !== "0"? 'AND kits.kit_categories_id = $3 ' : '') + 
             (req.params.search ? 'AND (kits.name ILIKE $4 OR kits.description ILIKE $4) ' : '') + 
             'ORDER BY $2 ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10';
-            console.log(qry);
+            console.log(qry, params);
         const { rows } = await db.query(
             qry, 
             params );
