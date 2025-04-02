@@ -45,17 +45,12 @@ const https = require('https');
         return true;
     }
     app.post('/kit/delete/:id', async (req, res) => {
-        console.log("Deleted kit-3");
         const user = await getUsers(req, res);
-        console.log("Deleted kit-2", user);
         if(!user) return;
         const kits = await db.query('SELECT id FROM kits WHERE id = $1', [req.params.id||0]);
-        console.log("Deleted kit-1q", kits.rows.length);
         if(kits.rows.length > 0){
-            console.log("Deleted kit0", kits.rows[0].id);
             if(!await authUser(res, req)) return;
             await db.query('UPDATE kits SET deleted = TRUE WHERE id = $1', [kits.rows[0].id]);
-            console.log("Deleted kit", kits.rows[0].id);
             res.send(JSON.stringify({deleted: kits.rows[0].id}));
         }else{
             res.send('{"error", "Kit not found"}');
