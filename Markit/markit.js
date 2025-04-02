@@ -45,13 +45,14 @@ const https = require('https');
         return true;
     }
     app.post('/kit/delete/:id', async (req, res) => {
-        console.log("Deleting kit", req.params, req.body);
         const user = await getUsers(req, res);
         if(!user) return;
         const kits = await db.query('SELECT id FROM kits WHERE id = $1', [req.params.id||0]);
         if(kits.rows.length > 0){
+            console.log("Deleted kit0", kits.rows[0].id);
             if(!await authUser(res, req)) return;
             await db.query('UPADTE kits SET deleted = TRUE WHERE id = $1', [kits.rows[0].id]);
+            console.log("Deleted kit", kits.rows[0].id);
             res.send(JSON.stringify({deleted: kits.rows[0].id}));
         }else{
             res.send('{"error", "Kit not found"}');
@@ -153,16 +154,6 @@ const https = require('https');
         await db.query('UPDATE kit_items SET use_count = use_count + 1 WHERE id = $1', [req.params.id]);
         res.send(JSON.stringify({}));
     });
-    // id BIGSERIAL PRIMARY KEY NOT NULL,
-    // users_id BIGINT NOT NULL,
-    // name varchar(1024) NOT NULL,
-    // description varchar(16000) DEFAULT NULL,
-    // picture varchar(2048) DEFAULT NULL,
-    // android varchar(2048) DEFAULT NULL,
-    // windows varchar(2048) DEFAULT NULL,
-    // item_count int DEFAULT 0,
-    // deleted boolean DEFAULT FALSE,
-    // created_at timestamp DEFAULT CURRENT_TIMESTAMP,
     app.get('/kits/:page/:sort-:direction/:category?/:search?', async (req, res) => {
         const params = [req.params.page || 0, req.params.sort || 'use_count,name'];
         if(req.params.category) params.push(req.params.category);
