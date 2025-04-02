@@ -161,11 +161,13 @@ const https = require('https');
         const qry = 'SELECT kits.id, kits.name, kits.use_count, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, kits.kit_categories_id, users.ext_id as users_id, users.name as user_name FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE ' + 
             (hasCategory? 'AND kits.kit_categories_id = $2 ' : '') + 
             (req.params.search ? 'AND (kits.name ILIKE $' + (hasCategory ? 3 : 2) +' OR kits.description ILIKE $' + (hasCategory ? 3 : 2) +') ' : '') + 
-            'ORDER BY ' + (sortFields.includes(req.params.sort) ? req.params.sort : "use_count") + ' ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ', name ASC OFFSET $1 LIMIT 12';
+            'ORDER BY ' + (sortFields.includes(req.params.sort) ? req.params.sort : "use_count") + ' ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ', name ASC OFFSET $1 LIMIT 13';
         const { rows } = await db.query(
             qry, 
             params );
-        res.send(JSON.stringify({rows}));
+        const hasMore = rows.length > 12;
+        if(hasMore) rows.pop();
+        res.send(JSON.stringify({rows, hasMore}));
     });
 
     server.listen(2096, function listening(){
