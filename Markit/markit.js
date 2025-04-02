@@ -33,7 +33,7 @@ const https = require('https');
             res.send('{"error", "User not found"}');
             return null;
         }
-        return users[0];
+        return users.rows[0];
     };
     const authUser = async (res, req) => {
         const userTest = await fetch("https://api.sidequestvr.com/v2/users/" + req.body.users_id + "/apps/me/achievements", {headers: {Authorization: `Bearer ${req.body.access_token}`}});
