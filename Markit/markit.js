@@ -109,7 +109,7 @@ const https = require('https');
     });
 
     app.get('/kit/:id', async (req, res) => {
-        const kits = await db.query('SELECT kits.*, users.id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE kits.id = $1', [req.params.id]);
+        const kits = await db.query('SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, users.id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE kits.id = $1', [req.params.id]);
         const kit = kits.rows[0];
         if(kit) {
             const users = await db.query('SELECT * FROM users WHERE id = $1', [kit.users_id]);
@@ -140,7 +140,7 @@ const https = require('https');
     });
 
     app.get('/kits/user/:users_id', async (req, res) => {
-        const { rows } = await db.query('SELECT * FROM kits WHERE deleted = FALSE AND users_id IN (SELECT id AS users_id FROM users where ext_id = $1)', [req.params.users_id]);
+        const { rows } = await db.query('SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, users.id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE AND users_id IN (SELECT id AS users_id FROM users where ext_id = $1)', [req.params.users_id]);
         res.send(JSON.stringify({rows}));
     });
 
@@ -153,13 +153,22 @@ const https = require('https');
         await db.query('UPDATE kit_items SET use_count = use_count + 1 WHERE id = $1', [req.params.id]);
         res.send(JSON.stringify({}));
     });
-
+    // id BIGSERIAL PRIMARY KEY NOT NULL,
+    // users_id BIGINT NOT NULL,
+    // name varchar(1024) NOT NULL,
+    // description varchar(16000) DEFAULT NULL,
+    // picture varchar(2048) DEFAULT NULL,
+    // android varchar(2048) DEFAULT NULL,
+    // windows varchar(2048) DEFAULT NULL,
+    // item_count int DEFAULT 0,
+    // deleted boolean DEFAULT FALSE,
+    // created_at timestamp DEFAULT CURRENT_TIMESTAMP,
     app.get('/kits/:page/:sort-:direction/:category?/:search?', async (req, res) => {
         const params = [req.params.page || 0, req.params.sort || 'use_count,name'];
         if(req.params.category) params.push(req.params.category);
         if(req.params.search) params.push("%" + req.params.search + "%");
         const { rows } = await db.query(
-            'SELECT kits.*, users.id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE ' + 
+            'SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, users.id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE ' + 
             (req.params.category ? 'AND kit_categories_id = $3 ' : '') + 
             (req.params.search ? 'AND (name ILIKE $4 OR description ILIKE $4) ' : '') + 
             'ORDER BY $2 ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10', 
