@@ -154,7 +154,7 @@ const https = require('https');
     });
     app.get('/kits/:page/:sort-:direction/:category?/:search?', async (req, res) => {
         const params = [req.params.page || 0, req.params.sort || 'use_count,name'];
-        if(req.params.category) params.push(req.params.category);
+        if(req.params.category && req.params.category !== "0") params.push(req.params.category);
         if(req.params.search) params.push("%" + req.params.search + "%");
         const { rows } = await db.query(
             'SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, kits.kit_categories_id, users.ext_id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE ' + 
