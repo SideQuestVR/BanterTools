@@ -45,6 +45,7 @@ const https = require('https');
         return true;
     }
     app.post('/kit/delete/:id', async (req, res) => {
+        console.log("Deleting kit", req.params, req.body);
         const user = await getUsers(req, res);
         if(!user) return;
         const kits = await db.query('SELECT id FROM kits WHERE id = $1', [req.params.id||0]);
