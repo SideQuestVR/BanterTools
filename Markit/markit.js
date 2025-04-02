@@ -48,6 +48,7 @@ const https = require('https');
         const user = await getUsers(req, res);
         if(!user) return;
         const kits = await db.query('SELECT id FROM kits WHERE id = $1', [req.params.id||0]);
+        console.log("Deleted kit-1q", kits.rows.length);
         if(kits.rows.length > 0){
             console.log("Deleted kit0", kits.rows[0].id);
             if(!await authUser(res, req)) return;
