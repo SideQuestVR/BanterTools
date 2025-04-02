@@ -109,7 +109,7 @@ const https = require('https');
     });
 
     app.get('/kit/:id', async (req, res) => {
-        const kits = await db.query('SELECT * FROM kits WHERE id = $1', [req.params.id]);
+        const kits = await db.query('SELECT kits.*, users.id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE kits.id = $1', [req.params.id]);
         const kit = kits.rows[0];
         if(kit) {
             const users = await db.query('SELECT * FROM users WHERE id = $1', [kit.users_id]);
@@ -159,7 +159,7 @@ const https = require('https');
         if(req.params.category) params.push(req.params.category);
         if(req.params.search) params.push("%" + req.params.search + "%");
         const { rows } = await db.query(
-            'SELECT * FROM kits WHERE deleted = FALSE ' + 
+            'SELECT kits.*, users.id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE ' + 
             (req.params.category ? 'AND kit_categories_id = $3 ' : '') + 
             (req.params.search ? 'AND (name ILIKE $4 OR description ILIKE $4) ' : '') + 
             'ORDER BY $2 ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10', 
