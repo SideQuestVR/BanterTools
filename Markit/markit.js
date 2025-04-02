@@ -26,7 +26,7 @@ const https = require('https');
     app.use(bodyParser.json({
         limit: '50mb'
     }))
-    const getUsers = async (req) => {
+    const getUsers = async (req, res) => {
         const users = await db.query('SELECT * FROM users WHERE ext_id = $1', [req.body.users_id]);
         if(users.rows.length == 0){
             res.status(404);
@@ -45,7 +45,7 @@ const https = require('https');
         return true;
     }
     app.post('/kit/delete/:id', async (req, res) => {
-        const user = await getUsers(req);
+        const user = await getUsers(req, res);
         if(!user) return;
         const kits = await db.query('SELECT id FROM kits WHERE id = $1', [req.params.id||0]);
         if(kits.rows.length > 0){
@@ -57,7 +57,7 @@ const https = require('https');
         }
     });
     app.post('/kit', async (req, res) => {
-        const user = await getUsers(req);
+        const user = await getUsers(req, res);
         if(!user) return;
         let rows = [];
         const kits = await db.query('SELECT id FROM kits WHERE id = $1', [req.body.id||0]);
