@@ -162,7 +162,6 @@ const https = require('https');
             (hasCategory? 'AND kits.kit_categories_id = $2 ' : '') + 
             (req.params.search ? 'AND (kits.name ILIKE $' + (hasCategory ? 3 : 2) +' OR kits.description ILIKE $' + (hasCategory ? 3 : 2) +') ' : '') + 
             'ORDER BY ' + (sortFields.includes(req.params.sort) ? req.params.sort : "use_count") + ' ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ', name ASC OFFSET $1 LIMIT 12';
-            console.log(qry, params);
         const { rows } = await db.query(
             qry, 
             params );
