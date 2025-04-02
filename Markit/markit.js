@@ -155,12 +155,12 @@ const https = require('https');
     const sortFields = ["name", "created_at", "use_count"];
     app.get('/kits/:page/:sort-:direction/:category?/:search?', async (req, res) => {
         const params = [req.params.page || 0];
-
-        if(req.params.category && req.params.category !== "0") params.push(req.params.category);
+        const hasCategory = req.params.category && req.params.category !== "0";
+        if(hasCategory) params.push(req.params.category);
         if(req.params.search) params.push("%" + req.params.search + "%");
         const qry = 'SELECT kits.id, kits.name, kits.use_count, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, kits.kit_categories_id, users.ext_id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE ' + 
-            (req.params.category && req.params.category !== "0"? 'AND kits.kit_categories_id = $2 ' : '') + 
-            (req.params.search ? 'AND (kits.name ILIKE $3 OR kits.description ILIKE $3) ' : '') + 
+            (hasCategory? 'AND kits.kit_categories_id = $2 ' : '') + 
+            (req.params.search ? 'AND (kits.name ILIKE $' + (hasCategory ? 3 : 2) +' OR kits.description ILIKE $' + (hasCategory ? 3 : 2) +') ' : '') + 
             'ORDER BY ' + (sortFields.includes(req.params.sort) ? req.params.sort : "use_count") + ' ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ', name ASC OFFSET $1 LIMIT 10';
             console.log(qry, params);
         const { rows } = await db.query(
