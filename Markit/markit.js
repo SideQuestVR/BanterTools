@@ -156,11 +156,13 @@ const https = require('https');
         const params = [req.params.page || 0, req.params.sort || 'use_count,name'];
         if(req.params.category && req.params.category !== "0") params.push(req.params.category);
         if(req.params.search) params.push("%" + req.params.search + "%");
-        const { rows } = await db.query(
-            'SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, kits.kit_categories_id, users.ext_id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE ' + 
+        const qry = 'SELECT kits.id, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, kits.kit_categories_id, users.ext_id as users_id FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE ' + 
             (req.params.category && req.params.category !== "0"? 'AND kits.kit_categories_id = $3 ' : '') + 
             (req.params.search ? 'AND (kits.name ILIKE $4 OR kits.description ILIKE $4) ' : '') + 
-            'ORDER BY $2 ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10', 
+            'ORDER BY $2 ' + (req.params.direction == 'asc' ? 'ASC' : 'DESC') + ' OFFSET $1 LIMIT 10';
+            console.log(qry);
+        const { rows } = await db.query(
+            qry, 
             params );
         res.send(JSON.stringify({rows}));
     });
