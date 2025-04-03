@@ -103,7 +103,7 @@ const https = require('https');
     });
 
     app.get('/kit/categories', async (req, res) => {
-        const { rows } = await db.query('SELECT * FROM kit_categories', []);
+        const { rows } = await db.query('SELECT * FROM kit_categories ORDER BY name', []);
         res.send(JSON.stringify({rows}));
     });
 
