@@ -139,7 +139,7 @@ const https = require('https');
     });
 
     app.get('/kits/user/:users_id', async (req, res) => {
-        const { rows } = await db.query('SELECT kits.id, kits.use_count, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, kits.kit_categories_id, users.ext_id as users_id, users.name as user_name FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE AND users_id IN (SELECT id AS users_id FROM users where ext_id = $1  ORDER BY kits.name)', [req.params.users_id]);
+        const { rows } = await db.query('SELECT kits.id, kits.use_count, kits.name, kits.description, kits.picture, kits.android, kits.windows, kits.item_count, kits.deleted, kits.created_at, kits.kit_categories_id, users.ext_id as users_id, users.name as user_name FROM kits LEFT JOIN users ON kits.users_id = users.id WHERE deleted = FALSE AND users_id IN (SELECT id AS users_id FROM users where ext_id = $1 )  ORDER BY kits.name', [req.params.users_id]);
         res.send(JSON.stringify({rows}));
     });
 
