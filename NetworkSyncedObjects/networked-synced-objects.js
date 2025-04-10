@@ -336,6 +336,7 @@ class GameServer{
       Object.keys(room.properties).forEach(d2 => {
         const d2p = room.properties[d2];
         if(d2 === "WssE-T5HqkCx4tKLHWvdWg.position") {
+          console.log(d2p.o);
           if(this.lastOwner !== d2p.o) {
             console.log("owner changed in tick", this.lastOwner, d2p.o);
           }
