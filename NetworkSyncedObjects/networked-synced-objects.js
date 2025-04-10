@@ -292,7 +292,6 @@ class GameServer{
             if(room.properties[p].o === ws.user) {
               if(room.properties[p].ch && newOwner.length) {
                 room.properties[p].o = newOwner[0].user;
-                this.hasTransferredOwner = true;
               }else{
                 delete room.properties[p];
                 removeObjs.push(p.split(".")[0]);
@@ -335,20 +334,16 @@ class GameServer{
 
       Object.keys(room.properties).forEach(d2 => {
         const d2p = room.properties[d2];
-        if(d2 === "WssE-T5HqkCx4tKLHWvdWg") {
+        if(d2 === "WssE-T5HqkCx4tKLHWvdWg.position") {
           console.log("tick", d2p);
         }
         if(d2p.up) {
           var prop = {v: d2p.v, o: d2p.o, t: d2p.t, ch: d2p.ch, id: d2};
-          if(this.hasTransferredOwner) {
-            prop.tr = 1;
-          }
           propertiesToSync.push(prop);
           d2p.up = false;
           shouldSync = true;
         }
       });
-      this.hasTransferredOwner = false;
       
       if(shouldSync) { 
         if(this.tickCount > 40) {
