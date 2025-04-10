@@ -256,6 +256,7 @@ class GameServer{
         break;
       // Update properties you want to take over.
       case "take-ownership":
+        console.log("trying ownership", ws.user);
         this.updateValue(json, ws, (d2p, d2) => { 
           if(d2p.ch) {
             console.log("taking ownership of", d2, "from", d2p.o, "to", ws.user);
