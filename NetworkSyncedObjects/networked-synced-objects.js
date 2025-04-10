@@ -206,7 +206,7 @@ class GameServer{
           console.log("user:", "@" + ws.user, "left room", "#" + ws.room);
           ws.room = null;
           ws.user = null;
-          this.cleanRoom(room);
+          assignNewOwner(room, ws);
         }
         break;
       case "join": {
@@ -289,19 +289,7 @@ class GameServer{
         if(!newOwner.length) {
           shouldDeleteRoom = true;
         }else{
-          Object.keys(room.properties).forEach(p => {
-            if(room.properties[p].o === ws.user) {
-              if(room.properties[p].ch && newOwner.length) {
-                if(p === "WssE-T5HqkCx4tKLHWvdWg.position") {
-                  console.log("owner changed as user left", room.properties[p].o, newOwner[0].user);
-                }
-                room.properties[p].o = newOwner[0].user;
-              }else{
-                delete room.properties[p];
-                removeObjs.push(p.split(".")[0]);
-              }
-            }
-          });
+          assignNewOwner(room, ws, p => removeObjs.push(p.split(".")[0]));
         }
       }
     });
@@ -315,6 +303,23 @@ class GameServer{
         this.broadcastToRoom(room, JSON.stringify({remove: removeObjs}));
       }
     }
+  }
+  assignNewOwner(room, ws, deleteCallback) {
+    Object.keys(room.properties).forEach(p => {
+      if(room.properties[p].o === ws.user) {
+        if(room.properties[p].ch && newOwner.length) {
+          if(p === "WssE-T5HqkCx4tKLHWvdWg.position") {
+            console.log("owner changed as user left", room.properties[p].o, newOwner[0].user);
+          }
+          room.properties[p].o = newOwner[0].user;
+        }else{
+          delete room.properties[p];
+          if(deleteCallback) {
+            deleteCallback(p);
+          }
+        }
+      }
+    });
   }
   tickWrapper() {
      
