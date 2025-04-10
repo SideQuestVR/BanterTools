@@ -35,10 +35,10 @@ const app = uWS.SSLApp({
     }
   },
   ping: async (ws) => {
-   console.log("ping");
+  //  console.log("ping");
   },
   pong: async (ws) => {
-   console.log("pong");
+  //  console.log("pong");
   }
 }).any('/*', (res, req) => {
   res.end('Nothing to see here!');
