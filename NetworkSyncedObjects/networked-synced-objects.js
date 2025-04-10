@@ -261,6 +261,7 @@ class GameServer{
           if(d2p.ch) {
             console.log("taking ownership of", d2, "from", d2p.o, "to", ws.user);
             d2p.o = ws.user;
+            d2p.up = true;
           }
         });
         
@@ -334,6 +335,9 @@ class GameServer{
 
       Object.keys(room.properties).forEach(d2 => {
         const d2p = room.properties[d2];
+        if(d2 === "WssE-T5HqkCx4tKLHWvdWg") {
+          console.log("tick", d2p);
+        }
         if(d2p.up) {
           var prop = {v: d2p.v, o: d2p.o, t: d2p.t, ch: d2p.ch, id: d2};
           if(this.hasTransferredOwner) {
