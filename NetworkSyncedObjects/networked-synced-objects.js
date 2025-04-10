@@ -259,6 +259,7 @@ class GameServer{
       case "take-ownership":
         this.updateValue(json, ws, (d2p, d2) => { 
           if(d2p.ch) {
+            console.log("taking ownership of", d2, "from", d2p.o, "to", ws.user);
             d2p.o = ws.user;
           }
         });
