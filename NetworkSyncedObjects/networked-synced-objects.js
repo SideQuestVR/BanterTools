@@ -115,7 +115,7 @@ class GameServer{
             
             // Handle changing ownership before the values are 
             // updated to allow the ownership check to pass.
-            ownershipCallback(d2p, d2);
+            ownershipCallback(d2p, d.id);
           }
           if(d2p.o === ws.user) {
              
@@ -126,7 +126,7 @@ class GameServer{
           }else{
             
             // This user cannot update this object.
-            this.notTheOwner(ws, d2, d2p.o);
+            this.notTheOwner(ws, d.id, d2p.o);
           }
         } else {
           if(syncTypes.includes(d.t)) {
