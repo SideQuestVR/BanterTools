@@ -109,34 +109,26 @@ class GameServer{
     let room = this.getOrCreateRoom(ws.room);
     // Recieve updates from connected clients for objecst they own. 
     json.data.forEach(d => {
-       // Does it exist? 
-        let objectExists = false;
-        Object.keys(room.properties).forEach(d2 => {
-          if(d2 === d.id) {
-            const d2p = room.properties[d2];
-            objectExists = true;
-            if(ownershipCallback) {
-              
-              // Handle changing ownership before the values are 
-              // updated to allow the ownership check to pass.
-              ownershipCallback(d2p, d2);
-            }
-            if(d2p.o === ws.user) {
-               
-               // This user owns this property, let's update!
-              d2p.v = d.v; 
-              // Mark this object as needsUpdate
-              d2p.up = true; 
-            }else{
-              
-              // This user cannot update this object.
-              this.notTheOwner(ws, d2, d2p.o);
-            }
+        const d2p = room.properties[d.id];
+        if(d2p) {
+          if(ownershipCallback) {
+            
+            // Handle changing ownership before the values are 
+            // updated to allow the ownership check to pass.
+            ownershipCallback(d2p, d2);
           }
-        });
-      
-        // Let's create it if not!
-        if(!objectExists) {
+          if(d2p.o === ws.user) {
+             
+             // This user owns this property, let's update!
+            d2p.v = d.v; 
+            // Mark this object as needsUpdate
+            d2p.up = true; 
+          }else{
+            
+            // This user cannot update this object.
+            this.notTheOwner(ws, d2, d2p.o);
+          }
+        } else {
           if(syncTypes.includes(d.t)) {
             room.properties[d.id] = {
               v: d.v, // value
@@ -232,7 +224,6 @@ class GameServer{
         json.data.forEach(d => {
           const d2 = d.id;
           if(d2 === "WssE-T5HqkCx4tKLHWvdWg.position") {
-
             console.log("tick-recieved", d.o);
           }
         });
