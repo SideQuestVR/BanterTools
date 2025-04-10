@@ -205,7 +205,8 @@ class GameServer{
           room.sockets = room.sockets.filter(_ws => _ws !== ws);
           console.log("user:", "@" + ws.user, "left room", "#" + ws.room);
           ws.room = null;
-          ws.user = null
+          ws.user = null;
+          this.cleanRoom(room);
         }
         break;
       case "join": {
