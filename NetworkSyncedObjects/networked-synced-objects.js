@@ -224,7 +224,7 @@ class GameServer{
         json.data.forEach(d => {
           const d2 = d.id;
           if(d2 === "WssE-T5HqkCx4tKLHWvdWg.position") {
-            console.log("tick-recieved", d.o);
+            // console.log("tick-recieved", d.o);
           }
         });
         this.updateValue(json, ws);
