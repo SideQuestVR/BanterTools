@@ -198,7 +198,7 @@ class GameServer{
           console.log("user:", "@" + ws.user, "left room", "#" + ws.room);
           ws.room = null;
           ws.user = null;
-          assignNewOwner(room, ws);
+          this.assignNewOwner(room, ws);
         }
         break;
       case "join": {
