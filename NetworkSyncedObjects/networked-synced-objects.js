@@ -327,6 +327,7 @@ class GameServer{
   }
   tick() {
     this.tickCount++;
+    let shouldTest = false;
     // Look for properties that nee dto be updated, and prepare them to be sent to all clients.
     Object.values(this.rooms).forEach(room => {
       const propertiesToSync = [];
@@ -335,7 +336,7 @@ class GameServer{
       Object.keys(room.properties).forEach(d2 => {
         const d2p = room.properties[d2];
         if(d2 === "WssE-T5HqkCx4tKLHWvdWg.position") {
-          console.log("tick", d2p);
+          shouldTest = d2p;
         }
         if(d2p.up) {
           var prop = {v: d2p.v, o: d2p.o, t: d2p.t, ch: d2p.ch, id: d2};
@@ -346,7 +347,8 @@ class GameServer{
       });
       
       if(shouldSync) { 
-        if(this.tickCount > 40) {
+        if(this.tickCount > 40 && shouldTest) {
+          console.log("tick", shouldTest);
           // console.log("room", room.id, "sockets", room.sockets.length, "props", Object.keys(room.properties).length, "socketstotal", wssClients.length, "shouldSync", shouldSync);
           this.tickCount = 0;
         }
