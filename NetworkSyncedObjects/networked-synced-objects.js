@@ -327,7 +327,7 @@ class GameServer{
   }
   tick() {
     this.tickCount++;
-    let shouldTest = false;
+
     // Look for properties that nee dto be updated, and prepare them to be sent to all clients.
     Object.values(this.rooms).forEach(room => {
       const propertiesToSync = [];
@@ -336,7 +336,10 @@ class GameServer{
       Object.keys(room.properties).forEach(d2 => {
         const d2p = room.properties[d2];
         if(d2 === "WssE-T5HqkCx4tKLHWvdWg.position") {
-          shouldTest = d2p;
+          if(this.lastOwner !== d2p.o) {
+            console.log("owner changed in tick", this.lastOwner, d2p.o);
+          }
+          this.lastOwner = d2p.o;
         }
         if(d2p.up) {
           var prop = {v: d2p.v, o: d2p.o, t: d2p.t, ch: d2p.ch, id: d2};
