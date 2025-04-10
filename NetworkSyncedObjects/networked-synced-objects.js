@@ -291,6 +291,9 @@ class GameServer{
           Object.keys(room.properties).forEach(p => {
             if(room.properties[p].o === ws.user) {
               if(room.properties[p].ch && newOwner.length) {
+                if(p === "WssE-T5HqkCx4tKLHWvdWg.position") {
+                  console.log("owner changed as user left", room.properties[p].o, newOwner[0].user);
+                }
                 room.properties[p].o = newOwner[0].user;
               }else{
                 delete room.properties[p];
