@@ -268,7 +268,7 @@ class GameServer{
         });
         
         // After you take ownership, force an update to the clients.
-        this.tick();
+        // this.tick();
         break;
     }
   }
