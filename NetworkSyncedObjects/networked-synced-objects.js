@@ -198,7 +198,7 @@ class GameServer{
           console.log("user:", "@" + ws.user, "left room", "#" + ws.room);
           ws.room = null;
           ws.user = null;
-          this.assignNewOwner(room, ws);
+          this.assignNewOwner(room, ws, room.sockets.filter(_ws => _ws != ws));
         }
         break;
       case "join": {
@@ -287,7 +287,7 @@ class GameServer{
         if(!newOwner.length) {
           shouldDeleteRoom = true;
         }else{
-          this.assignNewOwner(room, ws, p => removeObjs.push(p.split(".")[0]));
+          this.assignNewOwner(room, ws, newOwner, p => removeObjs.push(p.split(".")[0]));
         }
       }
     });
@@ -302,7 +302,7 @@ class GameServer{
       }
     }
   }
-  assignNewOwner(room, ws, deleteCallback) {
+  assignNewOwner(room, ws, newOwner, deleteCallback) {
     Object.keys(room.properties).forEach(p => {
       if(room.properties[p].o === ws.user) {
         if(room.properties[p].ch && newOwner.length) {
