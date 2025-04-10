@@ -260,8 +260,6 @@ class GameServer{
         this.updateValue(json, ws, (d2p, d2) => { 
           if(d2p.ch) {
             d2p.o = ws.user;
-          }else{
-            this.notTheOwner(ws, d2, d2p.o);
           }
         });
         
