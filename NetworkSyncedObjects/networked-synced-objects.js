@@ -108,6 +108,7 @@ class GameServer{
       return;
     let room = this.getOrCreateRoom(ws.room);
     // Recieve updates from connected clients for objecst they own. 
+    let created = 0;
     json.data.forEach(d => {
         const d2p = room.properties[d.id];
         if(d2p) {
@@ -137,7 +138,7 @@ class GameServer{
               ch: d.ch, // canChangeOwner
               up: true // needsUpdate
             };
-            console.log("created object", "#"+ d.id,"owned by", "@" + ws.user);
+            created++;
           }else{ 
             
             // The type is not recognised, do nothing!
@@ -145,6 +146,9 @@ class GameServer{
           }
         }
     });
+    if(created > 0) {
+      console.log("created",created,"objects owned by", ws.user);
+    }
   }
   getOrCreateRoom(name) {
     if(this.rooms[name]) {
