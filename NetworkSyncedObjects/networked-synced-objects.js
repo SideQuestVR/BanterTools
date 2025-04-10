@@ -147,7 +147,7 @@ class GameServer{
         }
     });
     if(created > 0) {
-      console.log("created",created,"objects owned by", ws.user);
+      console.log("created",created,"objects owned by", ws.user, "in room", ws.room);
     }
   }
   getOrCreateRoom(name) {
