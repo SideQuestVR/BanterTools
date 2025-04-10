@@ -229,6 +229,7 @@ class GameServer{
         
       // This is the most common path, update properties you own if they have changed
       case "tick":
+        console.log("tick", json.data);
         this.updateValue(json, ws);
         break;
         
