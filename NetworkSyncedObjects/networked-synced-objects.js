@@ -287,7 +287,7 @@ class GameServer{
         if(!newOwner.length) {
           shouldDeleteRoom = true;
         }else{
-          assignNewOwner(room, ws, p => removeObjs.push(p.split(".")[0]));
+          this.assignNewOwner(room, ws, p => removeObjs.push(p.split(".")[0]));
         }
       }
     });
