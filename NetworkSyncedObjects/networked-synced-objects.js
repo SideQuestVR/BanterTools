@@ -347,7 +347,7 @@ class GameServer{
       
       if(shouldSync) { 
         if(this.tickCount > 40) {
-          console.log("room", room.id, "sockets", room.sockets.length, "props", Object.keys(room.properties).length, "socketstotal", wssClients.length, "shouldSync", shouldSync);
+          // console.log("room", room.id, "sockets", room.sockets.length, "props", Object.keys(room.properties).length, "socketstotal", wssClients.length, "shouldSync", shouldSync);
           this.tickCount = 0;
         }
         // If any properties need to be updates, send them. 
