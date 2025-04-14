@@ -215,6 +215,7 @@ class GameServer{
           let room = this.getOrCreateRoom(ws.room);
           room.sockets.push(ws);
           console.log("user:", "@" + json.user, "joined room","#" + json.room);
+          this.flushRoomToUser(room, ws);
         }
         break;
         
@@ -333,6 +334,12 @@ class GameServer{
         ws.send(JSON.stringify(data)); // {data: propertiesToSync}
       }
     });
+  }
+  flushRoomToUser(room, ws) {
+    ws.send(JSON.stringify({path: "tick", data: Object.keys(room.properties).map(d2 => {
+      const d2p = room.properties[d2];
+      return {v: d2p.v, o: d2p.o, t: d2p.t, ch: d2p.ch, id: d2};
+    })}));
   }
   tick() {
     this.tickCount++;
