@@ -128,6 +128,7 @@ class GameServer{
             
             // This user cannot update this object.
             this.notTheOwner(ws, d.id, d2p.o);
+            console.log("not owned", d.id, d2p.o, ws.user);
           }
         } else {
           if(syncTypes.includes(d.t)) {
