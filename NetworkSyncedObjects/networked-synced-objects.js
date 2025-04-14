@@ -128,7 +128,6 @@ class GameServer{
             
             // This user cannot update this object.
             this.notTheOwner(ws, d.id, d2p.o);
-            console.log("not owned", d.id, d2p.o, ws.user);
           }
         } else {
           if(syncTypes.includes(d.t)) {
@@ -261,7 +260,7 @@ class GameServer{
         break;
       // Update properties you want to take over.
       case "take-ownership":
-        console.log("trying ownership", ws.user);
+        // console.log("trying ownership", ws.user);
         this.updateValue(json, ws, (d2p, d2) => { 
           if(d2p.ch) {
             console.log("taking ownership of", d2, "from", d2p.o, "to", ws.user);
@@ -312,9 +311,6 @@ class GameServer{
     Object.keys(room.properties).forEach(p => {
       if(room.properties[p].o === ws.user) {
         if(room.properties[p].ch && newOwner.length) {
-          if(p === "WssE-T5HqkCx4tKLHWvdWg.position") {
-            console.log("owner changed as user left", room.properties[p].o, newOwner[0].user);
-          }
           room.properties[p].o = newOwner[0].user;
         }else{
           delete room.properties[p];
