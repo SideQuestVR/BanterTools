@@ -240,6 +240,7 @@ class LeaderBoardsServer{
     this.broadcastDebounceTimeouts[room.id] = setTimeout(()=>{
         wssClients.forEach((ws) => {
             if(ws.room === room.id) {
+                console.log(data);
                 ws.send(JSON.stringify(data));
             }
         });
