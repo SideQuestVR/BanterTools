@@ -155,7 +155,6 @@ class LeaderBoardsServer{
             });
             return;
           default:
-                console.log(json);
             if(json.name && json.id && json.board && json.sort) {
                 if(!room.boards[json.board]) {
                     room.boards[json.board] = {
@@ -191,6 +190,7 @@ class LeaderBoardsServer{
                 }
                 this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
             }else{
+                console.log(json);
                 Object.keys(room.boards).forEach(b => {
                     const board = room.boards[b];
                     ws.send(JSON.stringify({path: "update-scores", board: board.board, scores: board}));
@@ -240,7 +240,6 @@ class LeaderBoardsServer{
     this.broadcastDebounceTimeouts[room.id] = setTimeout(()=>{
         wssClients.forEach((ws) => {
             if(ws.room === room.id) {
-                console.log(data);
                 ws.send(JSON.stringify(data));
             }
         });
