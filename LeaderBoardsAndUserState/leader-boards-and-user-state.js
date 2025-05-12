@@ -190,7 +190,6 @@ class LeaderBoardsServer{
                 }
                 this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
             }else{
-                console.log(json);
                 Object.keys(room.boards).forEach(b => {
                     const board = room.boards[b];
                     ws.send(JSON.stringify({path: "update-scores", board: board.board, scores: board}));
