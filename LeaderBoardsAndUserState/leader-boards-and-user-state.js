@@ -155,6 +155,7 @@ class LeaderBoardsServer{
             });
             return;
           default:
+                console.log(json);
             if(json.name && json.id && json.board && json.sort) {
                 if(!room.boards[json.board]) {
                     room.boards[json.board] = {
