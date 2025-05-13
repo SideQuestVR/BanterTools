@@ -100,6 +100,7 @@ class LeaderBoardsServer{
     Promise.all(scores.map(score => this.db.del(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${score.id}`)));
   }
   parseMessage(msg, ws) { 
+    console.log("parseMessage: ", msg);
     try{
         let json = JSON.parse(msg);
         if(!json.room) {
@@ -202,6 +203,7 @@ class LeaderBoardsServer{
     }
   }
   sendWholeRoom(room, ws) {
+    console.log("sendWholeRoom: ", room);
     Object.keys(room.boards).forEach(b => {
       const board = room.boards[b];
       ws.send(JSON.stringify({path: "update-scores", board: board.board, scores: board}));
