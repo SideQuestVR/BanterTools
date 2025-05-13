@@ -115,6 +115,7 @@ class LeaderBoardsServer{
         ws.room = json.room;
         switch(json.path) {
           case "clear-board":
+            console.log("clear-board: ", json);
             this.clearDbItems(room.boards[json.board].scores, json);
             room.boards[json.board].scores.length = [];
             this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
