@@ -100,6 +100,7 @@ class LeaderBoardsServer{
     Promise.all(scores.map(score => this.db.del(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${score.id}`)));
   }
   parseMessage(msg, ws) { 
+    console.log("parseMessage: ", msg);
     try{
         let json = JSON.parse(msg);
         if(!json.room) {
