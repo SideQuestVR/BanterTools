@@ -100,7 +100,6 @@ class LeaderBoardsServer{
     Promise.all(scores.map(score => this.db.del(`banter-leaderboard:${json.room}:${json.board}:${json.sort}:${score.id}`)));
   }
   parseMessage(msg, ws) { 
-    console.log("parseMessage: ", msg);
     try{
         let json = JSON.parse(msg);
         if(!json.room) {
@@ -115,7 +114,6 @@ class LeaderBoardsServer{
         ws.room = json.room;
         switch(json.path) {
           case "clear-board":
-            console.log("clear-board: ", json);
             this.clearDbItems(room.boards[json.board].scores, json);
             room.boards[json.board].scores.length = [];
             this.broadcastToRoom(room, {path: "update-scores", board: json.board, scores: room.boards[json.board]});
