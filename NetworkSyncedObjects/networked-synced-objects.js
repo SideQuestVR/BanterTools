@@ -43,10 +43,15 @@ server.on('message', (msg, rinfo) => {
 // Periodically check for disconnected clients
 setInterval(() => {
   const now = Date.now();
-  for (const {port, address, lastSeen} of Object.values(clients)) {
+  for (const {user, room, port, address, lastSeen} of Object.values(clients)) {
     if (now - lastSeen > TIMEOUT_MS) {
       console.log(`Client ${port, address} timed out`);
       delete clients[`${address}:${port}`];
+    if(user && room) {
+        console.log("user:", "@" + user, "disconnected from room", "#" + room);
+        let room = gameServer.getOrCreateRoom(ws.room);
+        gameServer.cleanRoom(room);
+    }
     }
   }
 }, CHECK_INTERVAL);
@@ -268,9 +273,11 @@ class GameServer{
           ws.user = json.user;
           ws.room = json.room;
           let room = this.getOrCreateRoom(ws.room);
-          room.sockets.push(ws);
-          const total = this.flushRoomToUser(room, ws);
-          console.log("user:", "@" + json.user, "joined room","#" + json.room , "with", total, "properties");
+          if(!room.sockets.includes(ws)) {
+            room.sockets.push(ws);
+            const total = this.flushRoomToUser(room, ws);
+            console.log("user:", "@" + json.user, "joined room","#" + json.room , "with", total, "properties");
+          }
         }
         break;
         
@@ -281,6 +288,7 @@ class GameServer{
         
       // This is the most common path, update properties you own if they have changed
       case "tick":
+        // console.log("tick", json.data.length, "properties from", ws.user, "in room", ws.room);
         json.data.forEach(d => {
           const d2 = d.id;
           if(d2 === "WssE-T5HqkCx4tKLHWvdWg.position") {
@@ -423,11 +431,12 @@ class GameServer{
           shouldSync = true;
         }
       });
-      
       if(shouldSync) { 
+        
         if(this.tickCount > 40) {
-          // console.log("room", room.id, "sockets", room.sockets.length, "props", Object.keys(room.properties).length, "socketstotal", wssClients.length, "shouldSync", shouldSync);
+          // console.log("room", room.id, "sockets", room.sockets.length, "props", Object.keys(room.properties).length, "socketstotal", Object.values(clients).length, "shouldSync", shouldSync);
           this.tickCount = 0;
+            // this.broadcastToRoom(room, {path: "test", data: {test: "test"}}); 
         }
         // If any properties need to be updates, send them. 
         this.broadcastToRoom(room, {path: "tick", data: propertiesToSync});  
