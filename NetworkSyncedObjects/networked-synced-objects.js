@@ -1,54 +1,109 @@
-const uWS = require('uWebSockets.js');
-const port = 2087;
-let wssClients = [];
-const app = uWS.SSLApp({
-  key_file_name: './ssl.key',
-  cert_file_name: './ssl.cert'
-}).ws('/*', {
-  maxPayloadLength: 512 * 1024,
-  open: (ws) => {
-    wssClients.push(ws);
-    // console.log('A WebSocket connected!');
-  },
-  message: (ws, message, isBinary) => {
-        try{
-          gameServer.parseMessage(Buffer.from(message).toString(), ws);
-        }catch(e) {
-          console.log("parse error: ", e);
-        }
+// const uWS = require('uWebSockets.js');
+
+const dgram = require('dgram');
+// const port = 2087;
 
 
-/* Ok is false if backpressure was built up, wait for drain */
+
+// let wssClients = [];
 
 
-    //let ok = ws.send(message, isBinary);
-  },
-  drain: (ws) => {
-    console.log('WebSocket backpressure: ' + ws.getBufferedAmount());
-  },
-  close: (ws, code, message) => {
-    wssClients = wssClients.filter(_ws => _ws !== ws);
-    if(ws.user && ws.room) {
-        console.log("user:", "@" + ws.user, "disconnected from room", "#" + ws.room, "with code", code);
-        let room = gameServer.getOrCreateRoom(ws.room);
-        gameServer.cleanRoom(room);
-    }
-  },
-  ping: async (ws) => {
-  //  console.log("ping");
-  },
-  pong: async (ws) => {
-  //  console.log("pong");
-  }
-}).any('/*', (res, req) => {
-  res.end('Nothing to see here!');
-}).listen(port, (token) => {
-  if (token) {
-    console.log('Listening to port ' + port);
+
+const server = dgram.createSocket('udp4');
+
+const PORT = 2087;
+const HOST = '0.0.0.0';
+const TIMEOUT_MS = 10000; // 10 seconds
+const CHECK_INTERVAL = 5000; // check every 5 seconds
+
+// Tracks clients: { 'host:port': timestamp }
+// const clients = new Map();
+
+const clients = {};
+
+server.on('listening', () => {
+  const address = server.address();
+  console.log(`UDP server listening on ${address.address}:${address.port}`);
+});
+
+server.on('message', (msg, rinfo) => {
+  const message = msg.toString().trim();
+  const {port, address} = rinfo;
+  const clientId = `${rinfo.address}:${rinfo.port}`;
+  clients[clientId] = clients[clientId] || {port, address};
+  if (message === 'ping') {
+    clients[clientId].lastSeen = Date.now();
+    console.log(`Received ping from ${clientId}`);
   } else {
-    console.log('Failed to listen to port ' + port);
+    gameServer.parseMessage(message, clients[clientId]);
+    // console.log(`Received message from ${clientId}: ${message}`);
   }
 });
+
+// Periodically check for disconnected clients
+setInterval(() => {
+  const now = Date.now();
+  for (const {port, address, lastSeen} of Object.values(clients)) {
+    if (now - lastSeen > TIMEOUT_MS) {
+      console.log(`Client ${port, address} timed out`);
+      delete clients[`${address}:${port}`];
+    }
+  }
+}, CHECK_INTERVAL);
+
+server.bind(PORT, HOST);
+
+
+
+// const app = uWS.SSLApp({
+//   key_file_name: './ssl.key',
+//   cert_file_name: './ssl.cert'
+// }).ws('/*', {
+//   maxPayloadLength: 512 * 1024,
+//   open: (ws) => {
+//     wssClients.push(ws);
+//     // console.log('A WebSocket connected!');
+//   },
+//   message: (ws, message, isBinary) => {
+//         try{
+//           gameServer.parseMessage(Buffer.from(message).toString(), ws);
+//         }catch(e) {
+//           console.log("parse error: ", e);
+//         }
+
+
+// /* Ok is false if backpressure was built up, wait for drain */
+
+
+//     //let ok = ws.send(message, isBinary);
+//   },
+//   drain: (ws) => {
+//     console.log('WebSocket backpressure: ' + ws.getBufferedAmount());
+//   },
+//   close: (ws, code, message) => {
+//     wssClients = wssClients.filter(_ws => _ws !== ws);
+//     if(ws.user && ws.room) {
+//         console.log("user:", "@" + ws.user, "disconnected from room", "#" + ws.room, "with code", code);
+//         let room = gameServer.getOrCreateRoom(ws.room);
+//         gameServer.cleanRoom(room);
+//     }
+//   },
+//   ping: async (ws) => {
+//   //  console.log("ping");
+//   },
+//   pong: async (ws) => {
+//   //  console.log("pong");
+//   }
+// }).any('/*', (res, req) => {
+//   res.end('Nothing to see here!');
+// }).listen(port, (token) => {
+//   if (token) {
+//     console.log('Listening to port ' + port);
+//   } else {
+//     console.log('Failed to listen to port ' + port);
+//   }
+// });
+
 
 
 
@@ -80,7 +135,7 @@ class GameServer{
     return totalDifference / (timestamps.length - 1)
   }
   errorResponse(ws, path, data) {
-    ws.send(JSON.stringify({path, data}));
+    this.send(ws, {path, data});
   }
   wrongType(ws, id) {
     this.errorResponse(ws,'wrong-type', id); 
@@ -328,16 +383,24 @@ class GameServer{
     this.tick();
     setTimeout(() => this.tickWrapper(), this.interval);
   }
+  send(ws, data) {
+    const response = Buffer.from(JSON.stringify(data));
+    server.send(response, 0, response.length, ws.port, ws.address, (err) => {
+      if (err) {
+        console.error(`Error sending response to ${ws.port}:${ws.address}`, err);
+      }
+    });
+  }
   broadcastToRoom(room, data) {
-    wssClients.forEach((ws) => {
+    Object.values(clients).forEach((ws) => {
       if(ws.room === room.id) {
-        ws.send(JSON.stringify(data)); // {data: propertiesToSync}
+        this.send(ws, data);
       }
     });
   }
   flushRoomToUser(room, ws) {
     const props = Object.keys(room.properties);
-    ws.send(JSON.stringify({path: "tick", data: props.map(d2 => {
+    this.send(ws, JSON.stringify({path: "tick", data: props.map(d2 => {
       const d2p = room.properties[d2];
       return {v: d2p.v, o: d2p.o, t: d2p.t, ch: d2p.ch, id: d2};
     })}));
