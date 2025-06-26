@@ -5,7 +5,7 @@ const dgram = require('dgram');
 
 
 
-// let wssClients = [];
+
 
 
 
@@ -16,10 +16,8 @@ const HOST = '0.0.0.0';
 const TIMEOUT_MS = 10000; // 10 seconds
 const CHECK_INTERVAL = 5000; // check every 5 seconds
 
-// Tracks clients: { 'host:port': timestamp }
-// const clients = new Map();
 
-const clients = {};
+const clients = [];
 
 server.on('listening', () => {
   const address = server.address();
@@ -29,87 +27,36 @@ server.on('listening', () => {
 server.on('message', (msg, rinfo) => {
   const message = msg.toString().trim();
   const {port, address} = rinfo;
-  const clientId = `${rinfo.address}:${rinfo.port}`;
-  clients[clientId] = clients[clientId] || {port, address};
-  if (message === 'ping') {
-    clients[clientId].lastSeen = Date.now();
-    console.log(`Received ping from ${clientId}`);
-  } else {
-    gameServer.parseMessage(message, clients[clientId]);
-    // console.log(`Received message from ${clientId}: ${message}`);
+  const clientId = `${address}:${port}`;
+  let client = clients.filter(c => c.port === port && c.address === address)[0];
+  if(!client) {
+      client = {port, address, lastSeen: Date.now(), user: null, room: null};
+      clients.push(client);
+  }else{
+      client.lastSeen = Date.now();
+  }
+  if (message !== 'ping') {
+    gameServer.parseMessage(message, client);
   }
 });
 
 // Periodically check for disconnected clients
 setInterval(() => {
   const now = Date.now();
-  for (const {user, room, port, address, lastSeen} of Object.values(clients)) {
+  for (const {user, room, port, address, lastSeen} of clients) {
     if (now - lastSeen > TIMEOUT_MS) {
       console.log(`Client ${port, address} timed out`);
-      delete clients[`${address}:${port}`];
-    if(user && room) {
-        console.log("user:", "@" + user, "disconnected from room", "#" + room);
-        let room = gameServer.getOrCreateRoom(ws.room);
-        gameServer.cleanRoom(room);
-    }
+      clients = clients.filter(c => !(c.port === port && c.address === address));
+      if(user && room) {
+          console.log("user:", "@" + user, "disconnected from room", "#" + room);
+          let _room = gameServer.getOrCreateRoom(room);
+          gameServer.cleanRoom(_room);
+      }
     }
   }
 }, CHECK_INTERVAL);
 
 server.bind(PORT, HOST);
-
-
-
-// const app = uWS.SSLApp({
-//   key_file_name: './ssl.key',
-//   cert_file_name: './ssl.cert'
-// }).ws('/*', {
-//   maxPayloadLength: 512 * 1024,
-//   open: (ws) => {
-//     wssClients.push(ws);
-//     // console.log('A WebSocket connected!');
-//   },
-//   message: (ws, message, isBinary) => {
-//         try{
-//           gameServer.parseMessage(Buffer.from(message).toString(), ws);
-//         }catch(e) {
-//           console.log("parse error: ", e);
-//         }
-
-
-// /* Ok is false if backpressure was built up, wait for drain */
-
-
-//     //let ok = ws.send(message, isBinary);
-//   },
-//   drain: (ws) => {
-//     console.log('WebSocket backpressure: ' + ws.getBufferedAmount());
-//   },
-//   close: (ws, code, message) => {
-//     wssClients = wssClients.filter(_ws => _ws !== ws);
-//     if(ws.user && ws.room) {
-//         console.log("user:", "@" + ws.user, "disconnected from room", "#" + ws.room, "with code", code);
-//         let room = gameServer.getOrCreateRoom(ws.room);
-//         gameServer.cleanRoom(room);
-//     }
-//   },
-//   ping: async (ws) => {
-//   //  console.log("ping");
-//   },
-//   pong: async (ws) => {
-//   //  console.log("pong");
-//   }
-// }).any('/*', (res, req) => {
-//   res.end('Nothing to see here!');
-// }).listen(port, (token) => {
-//   if (token) {
-//     console.log('Listening to port ' + port);
-//   } else {
-//     console.log('Failed to listen to port ' + port);
-//   }
-// });
-
-
 
 
 const syncTypes = [
@@ -120,7 +67,6 @@ const syncTypes = [
  
 class GameServer{
   constructor() {
-    // this.setupServer();
     this.interval = 50;
     this.rooms = {};
     this.tickWrapper();
@@ -345,7 +291,7 @@ class GameServer{
     let shouldDeleteRoom = false;
     room.sockets.forEach(ws=>{
       let isHere = false;
-      wssClients.forEach(_ws => {
+      clients.forEach(_ws => {
         if(_ws === ws) {
           isHere = true;
         }
@@ -400,7 +346,7 @@ class GameServer{
     });
   }
   broadcastToRoom(room, data) {
-    Object.values(clients).forEach((ws) => {
+    clients.forEach((ws) => {
       if(ws.room === room.id) {
         this.send(ws, data);
       }
