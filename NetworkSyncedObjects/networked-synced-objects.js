@@ -175,6 +175,10 @@ class GameServer{
     }
   }
   parseMessage(msg, ws) { 
+    if(msg === "pong") {
+      // console.log("pong");
+      return; // Ignore pong messages.
+    }
     let json = JSON.parse(msg);
     
     switch(json.path) {
