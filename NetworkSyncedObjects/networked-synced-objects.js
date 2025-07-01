@@ -1,5 +1,5 @@
 const uWS = require('uWebSockets.js');
-const port = 2087;
+const port = 443;
 let wssClients = [];
 const app = uWS.SSLApp({
   key_file_name: './ssl.key',
