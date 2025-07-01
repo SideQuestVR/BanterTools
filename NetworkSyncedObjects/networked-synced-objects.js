@@ -17,7 +17,7 @@ const TIMEOUT_MS = 10000; // 10 seconds
 const CHECK_INTERVAL = 5000; // check every 5 seconds
 
 
-const clients = [];
+let clients = [];
 
 server.on('listening', () => {
   const address = server.address();
