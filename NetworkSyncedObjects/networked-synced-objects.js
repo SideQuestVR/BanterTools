@@ -45,7 +45,7 @@ setInterval(() => {
   const now = Date.now();
   for (const {user, room, port, address, lastSeen} of clients) {
     if (now - lastSeen > TIMEOUT_MS) {
-      console.log(`Client ${port, address} timed out`);
+      console.log(`Client ${address + ":" + port +  + " @" + (user ? user : "No User")} timed out`);
       clients = clients.filter(c => !(c.port === port && c.address === address));
       if(user && room) {
           console.log("user:", "@" + user, "disconnected from room", "#" + room);
