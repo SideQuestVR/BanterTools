@@ -40,9 +40,9 @@ class Core{
       }
       await window.AframeInjection.waitFor(window, 'user');
       
-      if(this.params["hand-controls"] === 'true') { 
-        this.setupHandControls();
-      }
+      // if(this.params["hand-controls"] === 'true') { 
+      //   this.setupHandControls();
+      // }
     }else{
       try{
         if(!window.user) {
@@ -323,11 +323,11 @@ class Core{
     const playlistButton = document.createElement('a-entity');
     playlistButton.setAttribute('sq-boxcollider', `size: ${size == 'small' ? '0.3 0.2 0.05': size == 'medium' ? '0.45 0.2 0.05' : '0.6 0.2 0.05' }`);
     playlistButton.setAttribute('sq-interactable', '');
-    playlistButton.setAttribute('src', 'https://cdn.glitch.global/cf03534b-1293-4351-8903-ba15ffa931d3/angryimg.png?v=1689619321813');
+    playlistButton.setAttribute('src', 'https://cdn.sidequestvr.com/file/2309264/angryimg.png');
     
-    const glb = size == 'small' ? 'https://cdn.glitch.global/cf03534b-1293-4351-8903-ba15ffa931d3/ButtonS.glb?v=1689782700343' 
-    : size == 'medium' ? 'https://cdn.glitch.global/cf03534b-1293-4351-8903-ba15ffa931d3/ButtonM.glb?v=1689785121891'
-    : 'https://cdn.glitch.global/cf03534b-1293-4351-8903-ba15ffa931d3/ButtonL.glb?v=1689782699922';
+    const glb = size == 'small' ? 'https://cdn.sidequestvr.com/file/2309262/buttons.glb' 
+    : size == 'medium' ? 'https://cdn.sidequestvr.com/file/2309261/buttonm.glb'
+    : 'https://cdn.sidequestvr.com/file/2309263/buttonl.glb';
     
     playlistButton.setAttribute('gltf-model',glb);
     // playlistButton.setAttribute('depth', '0.05');
